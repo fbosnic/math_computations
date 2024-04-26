@@ -27,10 +27,15 @@ $\pi(i, j) = \min_{x \in [m, M]}LCP[x]$ where $m := \min(lkp[i], lkp[j])$ and $M
 ### Definintion 2:
 Let $i < k$ be arbitrary. $k$ is said to be distinguished for $i$, written $i \rightarrow k$, if
 $$\pi(i, j) < \pi(i, k) \qquad \forall i < j < k$$
-(Note that $i+1$ is always distinguished for $i$)
+*Note that $i+1$ is always distinguished for $i$*
 
-Moreover for $\alpha \in \N$, $k$ is said to be $\alpha$-distinguished for $i$ if $k$ is distinguished for $i$ and there are exactly $\alpha - 1$ indices in the interval $(i, k)$ which are distinguished for $i$.
+Moreover for $\alpha \in \N$, $k$ is said to be $\alpha$-distinguished for $i$, written $i \xrightarrow{\alpha} k$  if $k$ is distinguished for $i$ and there are exactly $\alpha - 1$ indices in the interval $(i, k)$ which are distinguished for $i$.
 Clearly, $\alpha$-distinguished index for $i$ is unique if it exists. Let us denote it by $k_\alpha \equiv k_\alpha(i)$.
+
+### Corollary 1.2:
+For all $i$ and $\alpha$:
+* $k_1(i) = i + 1$
+* $\pi(k_\alpha(i), i) \geq \alpha - 1$
 
 ### Lemma 3:
 Let $k$ be distinguished for $i$ and $j$, $i < j$. Then $\pi(i, k) > \pi(j, k)$.
