@@ -8,7 +8,13 @@ Let:
 * $SA \equiv SA(S)$ the suffix array of $S$ and $LCP \equiv LCP(S)$ the corresponding longest common prefix array
 * $lkp \equiv lkp(S)$ the lookup table from $S$ to $SA$ defined by $lkp[SA[k]] = k$
 
-### Problem (How many substrings) - ...
+### Problem ([hackerrank.com - How many substrings](https://www.hackerrank.com/challenges/how-many-substrings/problem))
+Given a string of characters $S$ of length $N$ and a list of $N$ queries consisting of a start index $s_k$ and an end index $e_k$, $0 <= s_k < e_k <= N$
+construct an algorithm that counts the number of unique substrings in $S[s_k: e_k]$ for each $k$.
+When $N = 10^5$ the algorithm is supposed to work in under approx. 2 seconds, i.e. is it allowed to make around $10^9$ operations.
+
+_Note - it is likely that the desired complexity is slightly below $\mathcal{O}(N^{\frac{3}{2}} \log(N))$.
+Whether the exponent lower than $\frac{3}{2}$ is required is unclear._
 
 ### Definition 1:
 Let $i, j \in \N$, define
