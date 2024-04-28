@@ -65,7 +65,7 @@ $$ S[x: x + m] = S[x + m: x + 2m]  \qquad x = i, k_{\alpha + 1}, k_{\alpha + 2}$
 
 If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \alpha / 2$. Let $P = S[k_{\alpha}: k_{\alpha + 1}]$ but then $S[i + l] = S[i + k_{\alpha}]$
 
-Algorithm 1:
+### Algorithm 1: (WIP, can't get it right)
 
     Input:
         1 < n, q < 10^5,
@@ -73,20 +73,19 @@ Algorithm 1:
         list of queries Q = [(s_k, e_k) for k=1...q]
 
     Compute suffix_array SA and lowest_common prefix LCP of S
+    Compute the min segment tree over $LCP$ array of $S$.
 
     Initialize reverse lookup lkp so that lkp[SA[k]] = k
-    Initialize st_as as min segment tree from array of zeros of length n
-    Initialize st_lcp as min segment_tree from array length n filled with value n
+    Initialize st_as as max segment tree from array of zeros of length n
+    # Initialize st_lcp as min segment_tree from array length n filled with value n
 
     Initialize fwt as Fenwick tree with size n filled with zeros.
 
     for l = n - 1 down to l = 0:
-        update st_as[lkp[l]] = SA[lkp[l]]
-        update st_lcp[lkp[l]] = 0
-
-        r = n - 1
-        while r > l:
-            x = f(l, r)
+        update st_as[lkp[l]] = n - SA[lkp[l]]
+        k_1, k_2, ... k_r = find_distinguished_elements(l)
+        q = l
+        for j = r down to 1:
             fwt.update_range(n - 1 - r, n - 1 - x - lcp.min(l, x), 1)
             r = x - 1
 
