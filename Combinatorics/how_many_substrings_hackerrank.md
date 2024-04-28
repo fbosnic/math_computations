@@ -38,10 +38,14 @@ For all $i$ and $\alpha$:
 * $\pi(k_\alpha(i), i) \geq \alpha - 1$
 
 ### Lemma 3:
-Let $k$ be distinguished for $i$ and $j$, $i < j$. Then $\pi(i, k) > \pi(j, k)$.
+Let $k$ be distinguished for $i$ and $j$, $i < j$. Then
+1) $\pi(i, k) > \pi(j, k)$,
+2) $\pi(i, j) = \pi(j, k)$
 
 #### Proof:
 Clearly $i < j < k$. Suppose the contrary, that $\pi(i,k) \leq \pi(j,k)$. Then $\pi(i,j) \geq \min(\pi(i, k), \pi(j, k)) \geq \pi(i, k)$. But this contradicts the fact that $k$ is distinguished for $i$.
+This proves 1).\
+For 2) it suffices to note that $\pi(i, j) = \pi(i, k) \wedge \pi(j, k) = \pi(j,k)$ directly from 1).
 
 ### Prop 4:
 For any $i < j$ there is at most one $k$ which is distinguished for both $i$ and $j$.
