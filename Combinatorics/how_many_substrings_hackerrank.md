@@ -54,9 +54,11 @@ Suppose there are 2 such distinguished elements, $k_1$ and $k_2$.
 By previous lemma, this would imply $\pi(j, k_1) = \pi(i, j) = \pi(j, k_2)$ which contradicts the definition of $j \to k_2$.
 
 ### Prop 5:
-For arbitrary $i$ we have $k_\alpha - k_{\alpha - 1} > \alpha$.
+For arbitrary $i$ and $\alpha$ we have $k_{\alpha + 2} (i) - k_{\alpha} (i) > \alpha / 2$.
+
 #### Proof:
-TODO
+We know that $\pi(i, k_{\beta}) \geq \alpha$ for all $\alpha \leq \beta \leq \alpha + 2$.
+If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \alpha / 2$. Let $P = S[k_{\alpha}: k_{\alpha + 1}]$ but then $S[i + l] = S[i + k_{\alpha}]$
 
 Algorithm 1:
 
