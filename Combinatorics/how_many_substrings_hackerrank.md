@@ -57,7 +57,12 @@ By previous lemma, this would imply $\pi(j, k_1) = \pi(i, j) = \pi(j, k_2)$ whic
 For arbitrary $i$ and $\alpha$ we have $k_{\alpha + 2} (i) - k_{\alpha} (i) > \alpha / 2$.
 
 #### Proof:
-We know that $\pi(i, k_{\beta}) \geq \alpha$ for all $\alpha \leq \beta \leq \alpha + 2$.
+Let us argue by contradiction.
+We know that $\pi(i, k_{\alpha + 1}) \wedge \pi(i, k_{\alpha + 2}) \geq \alpha$.
+If $m$ is the greatest common divisor of $m = gcd(k_{\alpha + 2} - k_{\alpha + 1}, k_{\alpha + 1} - k_{\alpha})$,
+then $S$ is locally $m$-periodic around $i$, $k_{\alpha + 1}$ and $k_{\alpha}$ in the sense that:
+$$ S[x: x + m] = S[x + m: x + 2m]  \qquad x = i, k_{\alpha + 1}, k_{\alpha + 2}$$
+
 If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \alpha / 2$. Let $P = S[k_{\alpha}: k_{\alpha + 1}]$ but then $S[i + l] = S[i + k_{\alpha}]$
 
 Algorithm 1:
