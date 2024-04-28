@@ -49,17 +49,9 @@ For 2) it suffices to note that $\pi(i, j) = \pi(i, k) \wedge \pi(j, k) = \pi(j,
 
 ### Prop 4:
 For any $i < j$ there is at most one $k$ which is distinguished for both $i$ and $j$.
-
 #### Proof:
-Suppose $k_1$ and $k_2$, $i < j < k_1 < k_2$, are both distinguished for $i$ and for $j$.
-Without the loss of generality we can assume .
-By [lemma 1](#lemma-1) we have $\pi(j, k_2) < \pi(i, k_2)$ and consequently $\pi(i, j) \geq \pi(j, k_2)$.
-Since $k_2$ is distinguished for $j$, $\pi(j, k_1) < \pi(j, k_2)$ and [lemma 1](#lemma-1) once again
-shows $\pi(i, k_1) > \pi(j, k_1)$.
-But then
-$$\pi(j, k_1) \geq \pi(i,j) \wedge \pi(i, k_1) \geq \pi(j, k_2) \wedge \pi(i, k_1) > \pi(j, k_1)$$
-leading to a contradiction.
-
+Suppose there are 2 such distinguished elements, $k_1$ and $k_2$.
+By previous lemma, this would imply $\pi(j, k_1) = \pi(i, j) = \pi(j, k_2)$ which contradicts the definition of $j \to k_2$.
 
 ### Prop 5:
 For arbitrary $i$ we have $k_\alpha - k_{\alpha - 1} > \alpha$.
