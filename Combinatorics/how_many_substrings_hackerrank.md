@@ -73,17 +73,25 @@ If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \al
         list of queries Q = [(s_k, e_k) for k=1...q]
 
     Compute suffix_array SA and lowest_common prefix LCP of S
-    Compute the min segment tree over $LCP$ array of $S$.
-
     Initialize reverse lookup lkp so that lkp[SA[k]] = k
-    Initialize st_as as max segment tree from array of zeros of length n
-    # Initialize st_lcp as min segment_tree from array length n filled with value n
-
-    Initialize fwt as Fenwick tree with size n filled with zeros.
+    Compute segment tree SA_seg_tree = max segment tree of n - SA
+    # Initialize running_lcp_seg_tree as the min segment tree over an array of len n filled with value n
+    Initialize fwt as Fenwick tree with size n over an array of zeros
 
     for l = n - 1 down to l = 0:
-        update st_as[lkp[l]] = n - SA[lkp[l]]
-        k_1, k_2, ... k_r = find_distinguished_elements(l)
+        pos = lkp[l]
+        # update running_lcp_lookup[pos] = LCP[pos]
+        k_1, k_2, ... k_r = find_distinguished_elements(pos, LCP, lkp)
+        x = 0
+
+        fwt.update_range(0, k_r - pi(k_r, l)) = [k_r - pi(k_r, l)..]
+        for k in (K):
+            pi = pi(l, k)
+
+            fwt.update_range(x, x + k - pi) = -1..
+            x = x + l - k
+            fwt.update_range()
+
         q = l
         for j = r down to 1:
             fwt.update_range(n - 1 - r, n - 1 - x - lcp.min(l, x), 1)
