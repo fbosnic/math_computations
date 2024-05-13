@@ -64,9 +64,10 @@ For arbitrary $i$ and $\alpha$ we have $k_{\alpha + 2} (i) - k_{\alpha} (i) > \
 #### Proof:
 Let us argue by contradiction.
 We know that $\pi(i, k_{\alpha + 1}) \wedge \pi(i, k_{\alpha + 2}) \geq \alpha$.
-If $m$ is the greatest common divisor of $m = gcd(k_{\alpha + 2} - k_{\alpha + 1}, k_{\alpha + 1} - k_{\alpha})$,
-then $S$ is locally $m$-periodic around $i$, $k_{\alpha + 1}$ and $k_{\alpha}$ in the sense that:
-$$ S[x: x + m] = S[x + m: x + 2m]  \qquad x = i, k_{\alpha + 1}, k_{\alpha + 2}$$
+Let $m$ be the greatest common divisor of $m = gcd(k_{\alpha + 2} - k_{\alpha + 1}, k_{\alpha + 1} - k_{\alpha})$. It is easy to see that $m \leq \alpha/2$ as a consequence of the Euclidean algorithm for the gdc and the assumption $k_{alpha+2} - k_{\alpha} \leq 2\alpha$.
+Then $S$ is locally $m$-periodic around $i$, $k_{\alpha + 1}$ and $k_{\alpha + 2}$ in the sense that:
+$$S[x: x + m] = S[x + m: x + 2m] \qquad x = i, k_{\alpha + 1}, k_{\alpha + 2}$$
+To prove this, notice first that $S[i: i+2m] = S[k_{\alpha + 1}: k_{\alpha + 1} + 2m] = S[k_{\alpha + 2}: k_{\alpha + 2} + 2m]$ due to $\pi(i, k_{\alpha + 1}) \wedge \pi(i, k_{\alpha + 2}) \geq \alpha$ and $2m \leq \alpha$.
 
 If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \alpha / 2$. Let $P = S[k_{\alpha}: k_{\alpha + 1}]$ but then $S[i + l] = S[i + k_{\alpha}]$
 
