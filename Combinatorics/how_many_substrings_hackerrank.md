@@ -72,39 +72,51 @@ To prove this, notice first that $S[i: i+2m] = S[k_{\alpha + 1}: k_{\alpha + 1} 
 If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \alpha / 2$. Let $P = S[k_{\alpha}: k_{\alpha + 1}]$ but then $S[i + l] = S[i + k_{\alpha}]$
 
 ### Algorithm 1: (WIP, can't get it right)
+    def Main
+        Input:
+            1 < n, q < 10^5,
+            string S of n character,
+            list of queries Q = [(s_k, e_k) for k=1...q]
+        Output:
+            list of n ints - number of different substrings in S[s_k: e_k)
 
-    Input:
-        1 < n, q < 10^5,
-        string S of n character,
-        list of queries Q = [(s_k, e_k) for k=1...q]
+        SA, LCP = compute_SA_and_LCP(S)
+        lkp = compute_reverse_lookup(SA)
+        fwk = empty_fw_tree_with_ranged_updates(n)
 
-    Compute suffix_array SA and lowest_common prefix LCP of S
-    Initialize reverse lookup lkp so that lkp[SA[k]] = k
-    Compute segment tree SA_seg_tree = max segment tree of n - SA
-    # Initialize running_lcp_seg_tree as the min segment tree over an array of len n filled with value n
-    Initialize fwt as Fenwick tree with size n over an array of zeros
+        sa_seg_tree = create_simple_segment_tree(n, n+1, "min")
+        LCP_seg_tree = convert_into_segment_tree(LCP, "min")
 
-    for l = n - 1 down to l = 0:
-        pos = lkp[l]
-        # update running_lcp_lookup[pos] = LCP[pos]
-        k_1, k_2, ... k_r = find_distinguished_elements(pos, LCP, lkp)
-        x = 0
+        for l = n - 1 down to l = 0:
+            pos = lkp[l]
 
-        fwt.update_range(0, k_r - pi(k_r, l)) = [k_r - pi(k_r, l)..]
-        for k in (K):
-            pi = pi(l, k)
+            r, k_1 < k_2 < ... < k_r = find_distinguished_elements(
+                pos,
+                LCP_seg_tree,
+                sa_seg_tree
+            )
+            k_0 = pos
+            for i=0 up to r:
+                fwt.update_range(k_i + LCP_seg_tree.min(pos, k_i), k_{i+1}, 1)
+            sa_seg_tree.update(pos, l)
 
-            fwt.update_range(x, x + k - pi) = -1..
-            x = x + l - k
-            fwt.update_range()
+    def update_range:
+        Input:
+            Fenwick tree fwt
+            start - first index of range to update (included)
+            end - last index of the range to update (excluded)
+            value - the value to update with
+        Output:
+            updated Fenwick tree fwt
 
-        q = l
-        for j = r down to 1:
-            fwt.update_range(n - 1 - r, n - 1 - x - lcp.min(l, x), 1)
-            r = x - 1
-
-        for (l, j) in Q:
-            store (n - 1 - l) * (n - 2 - l) / 2 - fwt(n - 1 - j)
+    def find_distingiushed_elements:
+        Input:
+            pos - index for which distinguished elements are computed
+            LCP_seg_tree - min segment tree on the full LCP
+            sa_seg_tree - min segment tree on the partial suffix array
+        Output:
+            r - number of distinguished elements for pos
+            k_1 < k2 < ... < k_r - distinguished elements for pos
 
 
 Def 4:
