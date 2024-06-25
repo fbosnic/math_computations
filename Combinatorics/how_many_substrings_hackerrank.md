@@ -84,20 +84,32 @@ If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \al
         lkp = compute_reverse_lookup(SA)
         fwk = empty_fw_tree_with_ranged_updates(n)
 
-        sa_seg_tree = create_simple_segment_tree(n, n+1, "min")
-        LCP_seg_tree = convert_into_segment_tree(LCP, "min")
+        sa_seg_tree = create_simple_segment_tree(
+            num_elements=n,
+            fill_value=n,
+            type="min"
+        )
+        LCP_seg_tree = convert_into_segment_tree(
+            underlying_array=LCP,
+            type="min"
+        )
 
         for l = n - 1 down to l = 0:
             pos = lkp[l]
 
             r, k_1 < k_2 < ... < k_r = find_distinguished_elements(
-                pos,
-                LCP_seg_tree,
-                sa_seg_tree
+                starting_position=pos,
+                lcp_segment_tree=LCP_seg_tree,
+                sa_seg_tree=sa_seg_tree,
+                sa_lookup=lkp
             )
-            k_0 = pos
+            fwt.update_range(start=l, end=k_1, value=1)
             for i=0 up to r:
-                fwt.update_range(k_i + LCP_seg_tree.min(pos, k_i), k_{i+1}, 1)
+                fwt.update_range(
+                    start=k_i + LCP_seg_tree.min(pos, lkp[k_i]),
+                    end=k_{i+1} + LCP_seg_tree.min(pos, lkp[k_i]),
+                    value=1
+                )
             sa_seg_tree.update(pos, l)
 
     def update_range:
@@ -111,13 +123,13 @@ If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \al
 
     def find_distingiushed_elements:
         Input:
-            pos - index for which distinguished elements are computed
+            l - suffix index for which distinguished elements are computed
             LCP_seg_tree - min segment tree on the full LCP
             sa_seg_tree - min segment tree on the partial suffix array
+            sa_lookup - inverse lookup for suffix array
         Output:
             r - number of distinguished elements for pos
-            k_1 < k2 < ... < k_r - distinguished elements for pos
-
+            k_1 < k2 < ... < k_r - distinguished suffix indices for l (l < k_1)
 
 Def 4:
 $i, j$ share distinguished element, $i \leftrightarrow j$ if there is a $k$ which is distinguished for both $i$ and $j$.
