@@ -74,11 +74,11 @@ If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \al
 ### Algorithm 1: (WIP, can't get it right)
     def Main
         Input:
-            1 < n, q < 10^5,
+            1 <= n, q <= 10^5,
             string S of n character,
             list of queries Q = [(s_k, e_k) for k=1...q]
         Output:
-            list of n ints - number of different substrings in S[s_k: e_k)
+            list of n ints - number of different substrings in S[s_k: e_k] (inclusive on both sides)
 
         SA, LCP = compute_SA_and_LCP(S)
         lkp = compute_reverse_lookup(SA)
@@ -104,7 +104,7 @@ If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \al
                 sa_lookup=lkp
             )
             fwt.update_range(start=l, end=k_1, value=1)
-            for i=0 up to r:
+            for i=1 up to r:
                 fwt.update_range(
                     start=k_i + LCP_seg_tree.min(pos, lkp[k_i]),
                     end=k_{i+1} + LCP_seg_tree.min(pos, lkp[k_i]),
@@ -124,12 +124,53 @@ If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \al
     def find_distingiushed_elements:
         Input:
             l - suffix index for which distinguished elements are computed
-            LCP_seg_tree - min segment tree on the full LCP
+            LCP_seg_tree - min segment tree on the full LCP array
             sa_seg_tree - min segment tree on the partial suffix array
             sa_lookup - inverse lookup for suffix array
         Output:
             r - number of distinguished elements for pos
             k_1 < k2 < ... < k_r - distinguished suffix indices for l (l < k_1)
+        r = 0
+        dist_elem = empty_list()
+        k = n
+
+        pos = sa_lookup[l]
+        left = pos
+        right = pos
+        node = (ref) sa_seg_tree.get_leaf(pos)
+
+        while k > pos + 1:
+            while node.value >= k:
+                node = node.parent
+            if node.left_child().value == node.value:
+                left = _find_most_right_leaf(node.left())
+                while node.right_child().value >= k:
+                    node = node.right_child()
+            else:
+
+            r = r + 1
+
+        return r, dist_elem
+
+
+    def _find_most_right_leaf(node):
+        while not left.is_leaf():
+            if node.right_child().value == node.value():
+                node = node.right_child()
+            else:
+                node = node.left_child()
+        return node
+
+    def _find_most_left_leaf(node):
+        while not left.is_leaf():
+            if node.left_child().value == node.value():
+                node = node.left_child()
+            else:
+                node = node.right_child()
+        return node
+
+
+
 
 Def 4:
 $i, j$ share distinguished element, $i \leftrightarrow j$ if there is a $k$ which is distinguished for both $i$ and $j$.
