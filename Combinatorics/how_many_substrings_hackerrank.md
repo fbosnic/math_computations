@@ -199,6 +199,15 @@ def find_last_larger_or_equal:
     return = node.index() - 1
 ```
 
+### Theorem 1. Previous algorithm works as intented.
+
+#### Proof:
+
+### Theorem 2. Previous algorithm has time complexity of $\mathcal{O}(n^{3/2}\log n)$
+
+#### Proof:
+
+
 Def 4:
 $i, j$ share distinguished element, $i \leftrightarrow j$ if there is a $k$ which is distinguished for both $i$ and $j$.
 
