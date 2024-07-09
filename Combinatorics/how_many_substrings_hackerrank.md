@@ -130,44 +130,65 @@ If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \al
         Output:
             r - number of distinguished elements for pos
             k_1 < k2 < ... < k_r - distinguished suffix indices for l (l < k_1)
+
+        pos = sa_lookup[l]
         r = 0
         dist_elem = empty_list()
         k = n
+        current = pos
 
-        pos = sa_lookup[l]
-        left = pos
-        right = pos
-        node = (ref) sa_seg_tree.get_leaf(pos)
-
-        while k > pos + 1:
-            while node.value >= k:
-                node = node.parent
-            if node.left_child().value == node.value:
-                left = _find_most_right_leaf(node.left())
-                while node.right_child().value >= k:
-                    node = node.right_child()
-            else:
-
-            r = r + 1
+        while True:
+            left = find_last(
+                sa_seg_tree,
+                LCP_seg_tree,
+                direction="left",
+                start=pos,
+                condition=lambda x: sa_seg_tree.min(x, pos) >= sa_seg_tree.min(current, pos)
+            )
+            right = find_last(
+                sa_seg_tree,
+                LCP_seg_tree,
+                direction="right",
+                start=pos,
+                condition=lambda x: sa_seg_tree.min([pos, x]) >= sa_seg_tree.min([pos, current])
+            )
+            if left == 0 and right == n-1
+                break
+            if left > 0:
+                left -= 1
+            if right < n-1:
+                right += 1
+            depth = max(LCP_seg_tree.min(left, pos), LCP_seg_tree.min(pos, right))
+            left = find_last(
+                LCP_seg_tree,
+                direction="left",
+                start=pos,
+                condition=lambda x: LCP_seg_tree.min(x, pos) >= depth
+            )
+            left = find_last(
+                LCP_seg_tree,
+                direction="right",
+                start=pos,
+                condition=lambda x: LCP_seg_tree.min(pos, x) >= depth
+            )
+            k = sa_seg_tree.min([left, right])
+            dist_elem.append(k)
+            r += 1
 
         return r, dist_elem
 
-
-    def _find_most_right_leaf(node):
-        while not left.is_leaf():
-            if node.right_child().value == node.value():
-                node = node.right_child()
-            else:
-                node = node.left_child()
-        return node
-
-    def _find_most_left_leaf(node):
-        while not left.is_leaf():
-            if node.left_child().value == node.value():
-                node = node.left_child()
-            else:
-                node = node.right_child()
-        return node
+    def find_last:
+        Input:
+            segment_tree,
+            direction,
+            start,
+            condition,
+        output:
+            index_of_last
+        node = (ref) pos
+        while node != root or condition(node.parent().right()):
+            node = node.parent()
+        while node
 
 
 
