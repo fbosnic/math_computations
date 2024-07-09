@@ -71,127 +71,133 @@ To prove this, notice first that $S[i: i+2m] = S[k_{\alpha + 1}: k_{\alpha + 1} 
 
 If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \alpha / 2$. Let $P = S[k_{\alpha}: k_{\alpha + 1}]$ but then $S[i + l] = S[i + k_{\alpha}]$
 
-### Algorithm 1: (WIP, can't get it right)
-    def Main
-        Input:
-            1 <= n, q <= 10^5,
-            string S of n character,
-            list of queries Q = [(s_k, e_k) for k=1...q]
-        Output:
-            list of n ints - number of different substrings in S[s_k: e_k] (inclusive on both sides)
+### Algorithm 1:
+```
+def Main
+    Input:
+        1 <= n, q <= 10^5,
+        string S of n character,
+        list of queries Q = [(s_k, e_k) for k=1...q]
+    Output:
+        list of n ints - number of different substrings in S[s_k: e_k] (inclusive on both sides)
 
-        SA, LCP = compute_SA_and_LCP(S)
-        lkp = compute_reverse_lookup(SA)
-        fwk = empty_fw_tree_with_ranged_updates(n)
+    SA, LCP = compute_SA_and_LCP(S)
+    lkp = compute_reverse_lookup(SA)
+    fwk = empty_fw_tree_with_ranged_updates(n)
 
-        sa_seg_tree = create_simple_segment_tree(
-            num_elements=n,
-            fill_value=n,
-            type="min"
+    sa_seg_tree = create_simple_segment_tree(
+        num_elements=n,
+        fill_value=n,
+        type="min"
+    )
+    LCP_seg_tree = convert_into_segment_tree(
+        underlying_array=LCP,
+        type="min"
+    )
+
+    for l = n - 1 down to l = 0:
+        pos = lkp[l]
+
+        r, k_1 < k_2 < ... < k_r = find_distinguished_elements(
+            starting_position=pos,
+            lcp_segment_tree=LCP_seg_tree,
+            sa_seg_tree=sa_seg_tree,
+            sa_lookup=lkp
         )
-        LCP_seg_tree = convert_into_segment_tree(
-            underlying_array=LCP,
-            type="min"
+        fwt.update_range(start=l, end=k_1, value=1)
+        for i=1 up to r:
+            fwt.update_range(
+                start=k_i + LCP_seg_tree.min(pos, lkp[k_i]),
+                end=k_{i+1} + LCP_seg_tree.min(pos, lkp[k_i]),
+                value=1
+            )
+        sa_seg_tree.update(pos, l)
+
+def update_range:
+    Input:
+        Fenwick tree fwt
+        start - first index of range to update (included)
+        end - last index of the range to update (excluded)
+        value - the value to update with
+    Output:
+        updated Fenwick tree fwt
+
+def find_distingiushed_elements:
+    Input:
+        l - suffix index for which distinguished elements are computed
+        LCP_seg_tree - min segment tree on the full LCP array
+        sa_seg_tree - min segment tree on the partial suffix array
+        sa_lookup - inverse lookup for suffix array
+    Output:
+        r - number of distinguished elements for pos
+        k_1 < k2 < ... < k_r - distinguished suffix indices for l (l < k_1)
+
+    pos = sa_lookup[l]
+    r = 0
+    dist_elem = empty_list()
+    k = n
+    current = pos
+
+    while True:
+        left = find_last_larger_or_equal(
+            sa_seg_tree,
+            direction="left",
+            start=pos,
+            value=sa_seg_tree.min(current, pos)  # left index included, right excluded
         )
+        right = find_last_larger_or_equal(
+            sa_seg_tree,
+            direction="right",
+            start=pos,
+            value=sa_seg_tree.min(pos, current)
+        )
+        if left == 0 and right == n-1
+            break
+        if left > 0:
+            left -= 1
+        if right < n-1:
+            right += 1
+        depth = max(LCP_seg_tree.min(left, pos), LCP_seg_tree.min(pos, right))
+        left = find_last_larger_or_equal(
+            LCP_seg_tree,
+            direction="left",
+            start=pos,
+            value=depth
+        )
+        left = find_last_larger_or_equal(
+            LCP_seg_tree,
+            direction="right",
+            start=pos,
+            value=depth
+        )
+        k = sa_seg_tree.min(left, right + 1)
+        dist_elem.append(k)
+        r += 1
 
-        for l = n - 1 down to l = 0:
-            pos = lkp[l]
+    return r, dist_elem
 
-            r, k_1 < k_2 < ... < k_r = find_distinguished_elements(
-                starting_position=pos,
-                lcp_segment_tree=LCP_seg_tree,
-                sa_seg_tree=sa_seg_tree,
-                sa_lookup=lkp
-            )
-            fwt.update_range(start=l, end=k_1, value=1)
-            for i=1 up to r:
-                fwt.update_range(
-                    start=k_i + LCP_seg_tree.min(pos, lkp[k_i]),
-                    end=k_{i+1} + LCP_seg_tree.min(pos, lkp[k_i]),
-                    value=1
-                )
-            sa_seg_tree.update(pos, l)
+def find_last_larger_or_equal:
+    Input:
+        segment_tree,
+        direction,
+        start,
+        value,
+    output:
+        index of last element larger or equal than the value in the specified direction
+    node = segment_tree.get_leaf_by_index(start)
+    while node != root or node.parent().child(direction).value() >= value:
+        node = node.parent()
+    if node == root:
+        return segment_tree.len() - 1
 
-    def update_range:
-        Input:
-            Fenwick tree fwt
-            start - first index of range to update (included)
-            end - last index of the range to update (excluded)
-            value - the value to update with
-        Output:
-            updated Fenwick tree fwt
-
-    def find_distingiushed_elements:
-        Input:
-            l - suffix index for which distinguished elements are computed
-            LCP_seg_tree - min segment tree on the full LCP array
-            sa_seg_tree - min segment tree on the partial suffix array
-            sa_lookup - inverse lookup for suffix array
-        Output:
-            r - number of distinguished elements for pos
-            k_1 < k2 < ... < k_r - distinguished suffix indices for l (l < k_1)
-
-        pos = sa_lookup[l]
-        r = 0
-        dist_elem = empty_list()
-        k = n
-        current = pos
-
-        while True:
-            left = find_last(
-                sa_seg_tree,
-                LCP_seg_tree,
-                direction="left",
-                start=pos,
-                condition=lambda x: sa_seg_tree.min(x, pos) >= sa_seg_tree.min(current, pos)
-            )
-            right = find_last(
-                sa_seg_tree,
-                LCP_seg_tree,
-                direction="right",
-                start=pos,
-                condition=lambda x: sa_seg_tree.min([pos, x]) >= sa_seg_tree.min([pos, current])
-            )
-            if left == 0 and right == n-1
-                break
-            if left > 0:
-                left -= 1
-            if right < n-1:
-                right += 1
-            depth = max(LCP_seg_tree.min(left, pos), LCP_seg_tree.min(pos, right))
-            left = find_last(
-                LCP_seg_tree,
-                direction="left",
-                start=pos,
-                condition=lambda x: LCP_seg_tree.min(x, pos) >= depth
-            )
-            left = find_last(
-                LCP_seg_tree,
-                direction="right",
-                start=pos,
-                condition=lambda x: LCP_seg_tree.min(pos, x) >= depth
-            )
-            k = sa_seg_tree.min([left, right])
-            dist_elem.append(k)
-            r += 1
-
-        return r, dist_elem
-
-    def find_last:
-        Input:
-            segment_tree,
-            direction,
-            start,
-            condition,
-        output:
-            index_of_last
-        node = (ref) pos
-        while node != root or condition(node.parent().right()):
-            node = node.parent()
-        while node
-
-
-
+    node = node.parent.child(direction)
+    while not node.is_leaf():
+        if node.child(direction.reverse()).value() >= value:
+            node = node.child(direction)
+        else:
+            node = node.child(direction.reverse())
+    return = node.index() - 1
+```
 
 Def 4:
 $i, j$ share distinguished element, $i \leftrightarrow j$ if there is a $k$ which is distinguished for both $i$ and $j$.
