@@ -202,9 +202,33 @@ def find_last_larger_or_equal:
     return = node.index() - 1
 ```
 
-### Theorem 1. Previous algorithm works as intented.
+### Theorem 1. Previous algorithm works as intented
 
 #### Proof:
+Let us verify that all functions produce the expected outputs starting from the
+`find_last_larger_or_equal`. The input here is a "min" segment tree over an arbitrary
+($0$-indexed) array $\mathcal{S}$, together with a starting index $i$, a direction which is either
+"left" or "right" and a value $\alpha$. Let start by assuming direction equals "right"
+and let $j$ be the desired index i.e.
+$$ \mathcal{S}_j \geq \alpha \qquad \text{and} \qquad \mathcal{S}_x < \alpha \quad \forall x > j$$
+Clearly $f(x) = \min_{(i, x]}{\mathcal{S}_x}$ is non-increasing in $x$. It is easy to extended it
+to nodes in the segment tree $\mathcal{S}$ by defining
+$f(N) = f(\max_{x \text{ is descendant of } N} x )$ for any node $N$ in $\mathcal{S}$.
+
+In case $j$ is the last index in the segment tree then $f(N) \geq \alpha$ for all nodes $N$ in the
+segment tree. Thus the first wile loop must finish with `node = root` and the algorithm
+will return the length of the segment tree minus 1 which is the last index i.e. $j$ by assumption.
+
+Otherwise, $j+1$ is an element of the segment tree and let $N$ be the lowest common
+ancestor of $i$ and $j+1$ in $\mathcal{S}$. Then the left child
+of $N$ must be an ancestor of $i$ and the right child of $N$, call it $R$, must be an ancestor
+of $j + 1$. It follows that $f(N) \geq f(j) \geq \alpha$ and $f(R) \leq f(j+1) < \alpha$.
+Hence, after the first while loop is complete, `node` will point to $R$.
+Note that 5f(M) ̣\geq f(N)$ for any node $M$ which is a descendant of $N$ and the while
+loop will not terminate before $R$.
+
+For arbitrary $y$ such that $i < 2^y$ the interval $(i, 2^y]$ can be decomposed as:
+$$(i, 2^y] = \bigcup_{\substack{z=1,2 \ldots y \\ \mathcal{B}_z(i) = 0}} [2^y - 2^z, 2^{z}]$$
 
 ### Theorem 2. Previous algorithm has time complexity of $\mathcal{O}(n^{3/2}\log n)$
 
