@@ -79,7 +79,7 @@ def Main
         string S of n character,
         list of queries Q = [(s_k, e_k) for k=1...q]
     Output:
-        list of n ints - number of different substrings in S[s_k: e_k] (inclusive on both sides)
+        list of n ints - number of different substrings of S in the inclusive range s_k, e_k
 
     SA, LCP = compute_SA_and_LCP(S)
     lkp = compute_reverse_lookup(SA)
@@ -164,7 +164,7 @@ def find_distingiushed_elements:
             start=pos,
             value=depth
         )
-        left = find_last_larger_or_equal(
+        right = find_last_larger_or_equal(
             LCP_seg_tree,
             direction="right",
             start=pos,
@@ -178,17 +178,20 @@ def find_distingiushed_elements:
 
 def find_last_larger_or_equal:
     Input:
-        segment_tree,
-        direction,
-        start,
-        value,
+        min_seg_tree - "min" segment tree over an arbitrary array
+        direction - either "left" or "righ" determining the direction of search
+        start - element to start the search from (excluded from search)
+        value - an arbitrary bound
     output:
-        index of last element larger or equal than the value in the specified direction
-    node = segment_tree.get_leaf_by_index(start)
+        index of last element larger or equal than the *value* in the specified direction
+    node = min_seg_tree.get_leaf_by_index(start)
     while node != root or node.parent().child(direction).value() >= value:
         node = node.parent()
     if node == root:
-        return segment_tree.len() - 1
+        if direction == "left":
+            return 0
+        else:
+            return segment_tree.len() - 1
 
     node = node.parent.child(direction)
     while not node.is_leaf():
