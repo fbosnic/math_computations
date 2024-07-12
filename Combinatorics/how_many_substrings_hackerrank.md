@@ -209,26 +209,54 @@ Let us verify that all functions produce the expected outputs starting from the
 `find_last_larger_or_equal`. The input here is a "min" segment tree over an arbitrary
 ($0$-indexed) array $\mathcal{S}$, together with a starting index $i$, a direction which is either
 "left" or "right" and a value $\alpha$. Let start by assuming direction equals "right"
-and let $j$ be the desired index i.e.
+and let $j$ be the desired index, that is
 $$ \mathcal{S}_j \geq \alpha \qquad \text{and} \qquad \mathcal{S}_x < \alpha \quad \forall x > j$$
-Clearly $f(x) = \min_{(i, x]}{\mathcal{S}_x}$ is non-increasing in $x$. It is easy to extended it
+Let us define
+$$f(x) = \begin{cases}\min_{(i, x]}\mathcal{S}_x \quad \text{ if } x > i \\ \mathcal{S}_{i+1} \quad \text{ otherwise.} \end{cases}$$
+is non-increasing in $x$. It is easy to extended it
 to nodes in the segment tree $\mathcal{S}$ by defining
-$f(N) = f(\max_{x \text{ is descendant of } N} x )$ for any node $N$ in $\mathcal{S}$.
+$f(N) = \min_{x \preccurlyeq N} f(x)$ for any node $N$ in
+$\mathcal{S}$ (where $x \preccurlyeq$ N indicates that $N$ is a an ancestor of x).
 
-In case $j$ is the last index in the segment tree then $f(N) \geq \alpha$ for all nodes $N$ in the
-segment tree. Thus the first wile loop must finish with `node = root` and the algorithm
+In case $j$ is the last index in the segment tree then $f(N) \geq \alpha$ for all nodes $N$.
+Thus the first wile loop must finish with `node = root` and the algorithm
 will return the length of the segment tree minus 1 which is the last index i.e. $j$ by assumption.
 
-Otherwise, $j+1$ is an element of the segment tree and let $N$ be the lowest common
+Otherwise, $j+1$ is a valid index of the segment tree so let $N$ be the lowest common
 ancestor of $i$ and $j+1$ in $\mathcal{S}$. Then the left child
-of $N$ must be an ancestor of $i$ and the right child of $N$, call it $R$, must be an ancestor
-of $j + 1$. It follows that $f(N) \geq f(j) \geq \alpha$ and $f(R) \leq f(j+1) < \alpha$.
-Hence, after the first while loop is complete, `node` will point to $R$.
-Note that 5f(M) ̣\geq f(N)$ for any node $M$ which is a descendant of $N$ and the while
-loop will not terminate before $R$.
+of $N$ must be an ancestor of $i$, call it $L$, and the right child of $N$, call it $R$,
+must be an ancestor of $j + 1$. It follows that
+$f(L) \geq f(j) \geq \alpha$ and $f(R) \leq f(j+1) < \alpha$.
+Clearly the first while loop traverses tree on the direct path from $i$ to root.
+The second inequality shows that the loop will terminate if it ever gets to $L$.
+On the other hand if the loop would terminate before $L$, then there would exist
+some $C_1$, it's parent $P_1$ (a descendant of $L$ or $L$ itself) and the
+right child $R_1$ of $P_1$ (which could be $C_1$) such that $f(R_1) < \alpha$.
+But this is impossible since $R_1$ is clearly a descendant of $L$ and therefore
+$f(R_1) \geq f(L) \geq \alpha$ leading to a contradiction.
+Hence, taking into account the intermediate lines, immediately before
+the second loop start, `node` points to $R$.
 
-For arbitrary $y$ such that $i < 2^y$ the interval $(i, 2^y]$ can be decomposed as:
-$$(i, 2^y] = \bigcup_{\substack{z=1,2 \ldots y \\ \mathcal{B}_z(i) = 0}} [2^y - 2^z, 2^{z}]$$
+As for the second loop, it must terminate as the depth of the `node` increases
+at each step and the tree is of finite depth. Let us also prove
+that $f(`node`) < \alpha$ throughout the execution.
+We argue by induction. The statement is true inially as $f(R) < \alpha$.
+Suppose that it is true at some step when `node` points to some node $N_2$.
+Let $L_2$ and $R_2$ be left and right child of $N_2$. There are two cases to
+consider. Firstly, if $f(L_2) < \alpha$ then `node` is set to $L_2$ and the
+statemnt holds. Otherwise, `node` is set to $R_2$ but the statement remains
+true as $f(R_2)$ = $f(N_2) < \alpha$ by definitition of $f$ and
+inductive assumption. Thus, after the loop is finished, `node` points to
+some $k$ such that $f(k) < \alpha$. We now show that $f(k - 1) \geq \alpha$.
+Indeed, let $P_3$ be the lowest common ancestor of $k-1$ and $k$ and
+let $L_3$ and $R_3$ be its left and right child respectively. There must
+have been a step of the loop where `node` was pointing to $P_3$. Since
+$R_3$ was selected for the next step it must mean that $f(L_3) \geq \alpha$
+which implies that $f(k-1) \geq \alpha$. Now we have that
+$f(j) \geq \alpha$, $f(j + 1) < \alpha$, $f(k-1) \geq \alpha$, $f(k) < \alpha$
+which implies that $j = k-1$ since $f$ is non-increasing.
+Thus we have proved that the function behaves as expected in case the direction
+is equal to right.
 
 ### Theorem 2. Previous algorithm has time complexity of $\mathcal{O}(n^{3/2}\log n)$
 
