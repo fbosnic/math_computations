@@ -195,10 +195,10 @@ def find_last_larger_or_equal:
 
     node = node.parent.child(direction)
     while not node.is_leaf():
-        if node.child(direction.reverse()).value() >= value:
-            node = node.child(direction)
-        else:
+        if node.child(direction.reverse()).value() < value:
             node = node.child(direction.reverse())
+        else:
+            node = node.child(direction)
     return = node.index() - 1
 ```
 
