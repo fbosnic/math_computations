@@ -185,7 +185,7 @@ def find_last_larger_or_equal:
     output:
         index of last element larger or equal than the *value* in the specified direction
     node = min_seg_tree.get_leaf_by_index(start)
-    while node != root or node.parent().child(direction).value() >= value:
+    while node != root and (node.is_child(direction) or node.parent().child(direction).value() >= value):
         node = node.parent()
     if node == root:
         if direction == "left":
