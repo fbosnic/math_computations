@@ -208,15 +208,18 @@ def find_last_larger_or_equal:
 Let us verify that all functions produce the expected outputs starting from the
 `find_last_larger_or_equal`. The input here is a "min" segment tree over an arbitrary
 ($0$-indexed) array $\mathcal{S}$, together with a starting index $i$, a direction which is either
-"left" or "right" and a value $\alpha$. Let start by assuming direction equals "right"
+"left" or "right" and a value $\alpha$. Start by assuming that direction equals "right"
 and let $j$ be the desired index, that is
-$$ \mathcal{S}_j \geq \alpha \qquad \text{and} \qquad \mathcal{S}_x < \alpha \quad \forall x > j$$
-Let us define
+$$ \mathcal{S}_{j+1} < \alpha \qquad \text{and} \qquad \mathcal{S}_x \geq \alpha \quad \forall x \in (i, j]$$
+Let $\mathcal{S}(N) := \min_{x \preccurlyeq N} \mathcal{S}_x$ to be the "min operation" on
+the segment tree for an arbitrary node $N$ where $x \preccurlyeq N$ indicates that
+$x$ is an index such that the leaf at that index is a descendant of $N$.
+Define also
 $$f(x) = \begin{cases}\min_{(i, x]}\mathcal{S}_x \quad \text{ if } x > i \\ \mathcal{S}_{i+1} \quad \text{ otherwise.} \end{cases}$$
-is non-increasing in $x$. It is easy to extended it
+It is easy to extended it
 to nodes in the segment tree $\mathcal{S}$ by defining
 $f(N) = \min_{x \preccurlyeq N} f(x)$ for any node $N$ in
-$\mathcal{S}$ (where $x \preccurlyeq$ N indicates that $N$ is a an ancestor of x).
+$\mathcal{S}$.
 
 In case $j$ is the last index in the segment tree then $f(N) \geq \alpha$ for all nodes $N$.
 Thus the first wile loop must finish with `node = root` and the algorithm
@@ -224,35 +227,45 @@ will return the length of the segment tree minus 1 which is the last index i.e. 
 
 Otherwise, $j+1$ is a valid index of the segment tree so let $N$ be the lowest common
 ancestor of $i$ and $j+1$ in $\mathcal{S}$. Then the left child
-of $N$ must be an ancestor of $i$, call it $L$, and the right child of $N$, call it $R$,
+of $N$ must be an ancestor of $i$, call it $L$, and the right child, call it $R$,
 must be an ancestor of $j + 1$. It follows that
-$f(L) \geq f(j) \geq \alpha$ and $f(R) \leq f(j+1) < \alpha$.
-Clearly the first while loop traverses tree on the direct path from $i$ to root.
-The second inequality shows that the loop will terminate if it ever gets to $L$.
-On the other hand if the loop would terminate before $L$, then there would exist
-some $C_1$, it's parent $P_1$ (a descendant of $L$ or $L$ itself) and the
-right child $R_1$ of $P_1$ (which could be $C_1$) such that $f(R_1) < \alpha$.
-But this is impossible since $R_1$ is clearly a descendant of $L$ and therefore
-$f(R_1) \geq f(L) \geq \alpha$ leading to a contradiction.
-Hence, taking into account the intermediate lines, immediately before
-the second loop start, `node` points to $R$.
+$f(L) \geq \min_{x \in (i, j]} \geq \alpha$ and $f(R) \vee \mathcal{S}(R) \leq S_{j+1} < \alpha.$
+Clearly the first while loop traverses the tree on the direct path from $i$ to the root.
+Note that the terminating condition $\mathcal{S}(R) < \alpha$ is satisfied for $L$.
+Also, if the loop would terminate before $L$, then there would exist
+some $L_1$, it's parent $P_1$ (a descendant of $L$ or $L$ itself) and the
+right child $R_1$ of $P_1$ satisfying (according to the termination condition)
+$L_1 \neq R_1$ and $\mathcal{S}(R_1) < \alpha$.
+But this is impossible because
+$i \in L_1$ implies that $i < \min_{x \preccurlyeq R_1} x$ and thus
+$f(R_1) \leq \mathcal{S}(R_1)$ from where we find
+$\alpha \leq f(L) \leq f(P) \leq f(R_1) \leq \mathcal{S}(R_1)$ whih contradits the assumption.
+Hence the first loop terminates exactly at $L$ and, taking into account the intermediate lines,
+`node` points to $R$ just before the second loop starts.
 
 As for the second loop, it must terminate as the depth of the `node` increases
-at each step and the tree is of finite depth. Let us also prove
-that $f(`node`) < \alpha$ throughout the execution.
-We argue by induction. The statement is true inially as $f(R) < \alpha$.
+at each step and the tree is of finite depth. Let us prove by induction
+that $f(`node`) < \alpha$ in every step of the loop.
+The statement is true inially as $f(R) < \alpha$.
 Suppose that it is true at some step when `node` points to some node $N_2$.
-Let $L_2$ and $R_2$ be left and right child of $N_2$. There are two cases to
-consider. Firstly, if $f(L_2) < \alpha$ then `node` is set to $L_2$ and the
-statemnt holds. Otherwise, `node` is set to $R_2$ but the statement remains
-true as $f(R_2)$ = $f(N_2) < \alpha$ by definitition of $f$ and
+Let $L_2$ and $R_2$ be the left and the right children of $N_2$.
+Notice that $i \in L$ implies $i < \min_{x \preccurlyeq R} x$ and the
+same is true for all the descendants of $R$, in particular for
+$N_2, L_2$ and $R_2$. But this is enugh to conclude that
+$f(X) \leq \mathcal{S}(X)$ for $X = N_2, L_2$ or $R_2$.
+There are two cases to
+consider. Firstly, if $\mathcal{S}(L_2) < \alpha$ then `node` is set to $L_2$ and the
+statemnt holds since $f(L_2) \leq \mathcal{S}(L_2)$.  Otherwise, `node` is set to $R_2$
+but the statement remains true as $f(R_2)$ = $f(N_2) < \alpha$ by definitition of $f$ and
 inductive assumption. Thus, after the loop is finished, `node` points to
 some $k$ such that $f(k) < \alpha$. We now show that $f(k - 1) \geq \alpha$.
 Indeed, let $P_3$ be the lowest common ancestor of $k-1$ and $k$ and
 let $L_3$ and $R_3$ be its left and right child respectively. There must
 have been a step of the loop where `node` was pointing to $P_3$. Since
 $R_3$ was selected for the next step it must mean that $f(L_3) \geq \alpha$
-which implies that $f(k-1) \geq \alpha$. Now we have that
+which implies that $f(k-1) \geq \alpha$.
+
+Now we have that
 $f(j) \geq \alpha$, $f(j + 1) < \alpha$, $f(k-1) \geq \alpha$, $f(k) < \alpha$
 which implies that $j = k-1$ since $f$ is non-increasing.
 Thus we have proved that the function behaves as expected in case the direction
