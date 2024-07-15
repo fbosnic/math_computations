@@ -133,31 +133,27 @@ def find_distingiushed_elements:
         k_1 < k2 < ... < k_r - distinguished suffix indices for l (l < k_1)
 
     pos = sa_lookup[l]
-    r = 0
     dist_elem = empty_list()
-    k = n
-    current = pos
 
+    v = pos
     while True:
         left = find_last_larger_or_equal(
             sa_seg_tree,
             direction="left",
             start=pos,
-            value=sa_seg_tree.min(current, pos)  # left index included, right excluded
+            value=v
         )
         right = find_last_larger_or_equal(
             sa_seg_tree,
             direction="right",
             start=pos,
-            value=sa_seg_tree.min(pos, current)
+            value=v
         )
-        if left == 0 and right == n-1
-            break
         if left > 0:
             left -= 1
         if right < n-1:
             right += 1
-        depth = max(LCP_seg_tree.min(left, pos), LCP_seg_tree.min(pos, right))
+        depth = LCP_seg_tree.min(left, right)
         left = find_last_larger_or_equal(
             LCP_seg_tree,
             direction="left",
@@ -172,7 +168,8 @@ def find_distingiushed_elements:
         )
         k = sa_seg_tree.min(left, right + 1)
         dist_elem.append(k)
-        r += 1
+        v = k - 1
+
 
     return r, dist_elem
 
@@ -270,6 +267,11 @@ $f(j) \geq \alpha$, $f(j + 1) < \alpha$, $f(k-1) \geq \alpha$, $f(k) < \alpha$
 which implies that $j = k-1$ since $f$ is non-increasing.
 Thus we have proved that the function behaves as expected in case the direction
 is equal to right.
+
+The case of direction equal to "left" is analoguous (though one still needs to
+make sure! TODO)
+
+Next, we move to `find_distinguished_elements` function.
 
 ### Theorem 2. Previous algorithm has time complexity of $\mathcal{O}(n^{3/2}\log n)$
 
