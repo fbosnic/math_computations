@@ -173,14 +173,14 @@ def find_distingiushed_elements:
 
     return r, dist_elem
 
-def find_last_larger_or_equal:
+def find_maximal_index_such_that_all_before_are_larger:
     Input:
         min_seg_tree - "min" segment tree over an arbitrary array
         direction - either "left" or "righ" determining the direction of search
         start - element to start the search from (excluded from search)
         value - an arbitrary bound
     output:
-        index of last element larger or equal than the *value* in the specified direction
+        index of maximal element (in the specified direction) such that all before it are larger than *value*
     node = min_seg_tree.get_leaf_by_index(start)
     while node != root and (node.is_child(direction) or node.parent().child(direction).value() >= value):
         node = node.parent()
@@ -203,7 +203,7 @@ def find_last_larger_or_equal:
 
 #### Proof:
 Let us verify that all functions produce the expected outputs starting from the
-`find_last_larger_or_equal`. The input here is a "min" segment tree over an arbitrary
+`find_maximal_index_such_that_all_before_are_larger`. The input here is a "min" segment tree over an arbitrary
 ($0$-indexed) array $\mathcal{S}$, together with a starting index $i$, a direction which is either
 "left" or "right" and a value $\alpha$. Start by assuming that direction equals "right"
 and let $j$ be the desired index, that is
