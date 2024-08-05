@@ -98,19 +98,21 @@ def Main
     for l = n - 1 down to l = 0:
         pos = lkp[l]
 
-        r, k_1 < k_2 < ... < k_r = find_distinguished_elements(
+        k_1 < k_2 < ... < k_r = find_distinguished_elements(
             starting_position=pos,
             lcp_segment_tree=LCP_seg_tree,
             sa_seg_tree=sa_seg_tree,
             sa_lookup=lkp
         )
-        fwt.update_range(start=l, end=k_1, value=1)
-        for i=1 up to r:
+        fwt.update_range(start=l, end=n, value=1)
+        _progressive_lcp = 0
+        for i=1 up to r-1:“
             fwt.update_range(
-                start=k_i + LCP_seg_tree.min(pos, lkp[k_i]),
-                end=k_{i+1} + LCP_seg_tree.min(pos, lkp[k_i]),
-                value=1
+                start=k_i + _progressive_lcp,
+                end=k_i + LCP_seg_tree.min(pos, lkp[k_i]),
+                value=-1
             )
+            _progressive_lcp = LCP_seg_tree.min(pos, lkp[k_i])
         sa_seg_tree.update(pos, l)
 
 def update_range:
@@ -129,8 +131,7 @@ def find_distingiushed_elements:
         sa_seg_tree - min segment tree on the partial suffix array
         sa_lookup - inverse lookup for suffix array
     Output:
-        r - number of distinguished elements for pos
-        k_1 < k2 < ... < k_r - distinguished suffix indices for l (l < k_1)
+        Inreasing list k_1 < k2 < ... < k_r - distinguished suffix indices for l (l < k_1)
 
     pos = sa_lookup[l]
     dist_elem = empty_list()
