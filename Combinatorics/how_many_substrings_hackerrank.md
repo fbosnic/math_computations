@@ -136,7 +136,7 @@ def find_distingiushed_elements:
     pos = sa_lookup[l]
     dist_elem = empty_list()
 
-    v = pos
+    v = l
     while True:
         left = find_last_larger_or_equal(
             sa_seg_tree,
@@ -272,7 +272,18 @@ is equal to right.
 The case of direction equal to "left" is analoguous (though one still needs to
 make sure! TODO)
 
+
 Next, we move to `find_distinguished_elements` function.
+Note that this function is called within the main function only with the variable `sa_seg_tree` as the segment tree. Call this segment tree $\mathcal{S}_a$ and call the segment tree `LCP_seg_tree` by $\mathcal{S}_l$.
+$\mathcal{S}_a$ is initialized with a value of $n$ and element at `pos = lkp[l]` is set to $l$ once the function is called with parameter $l$.
+As `lkp` is a bijection, whenever this function is called, $\mathcal{S}_a$ contains values $l, l+1, \ldots n-1$ exactly once and then several times the value $n$.
+
+We will prove by induction that each set of the while loop produces the correct distinguished element. Initially, $v=l$ and all elements in $\mathcal{S}_a$ are larger or equal than that value.
+Thus, `left` equals $0$ and `right` equals $n-1$ and consequently `depth` is equal to $\tilde{v}=\min \mathcal{S}_l$.
+Clearly all elements of $\mathcal{S}_l$ are larger than $\tilde{v}$ so the second update keeps `left` at $0$ and  `right` at $n-1$.
+Recalling the specific structure of $\mathcal{S}_a$ we get that $k = l+1$ which is the first distinguished index $k_1(l)$ in the previous notation. $v$ is set to $l+2$.
+
+We now assume that ...
 
 ### Theorem 2. Previous algorithm has time complexity of $\mathcal{O}(n^{3/2}\log n)$
 
