@@ -59,17 +59,23 @@ Suppose there are 2 such distinguished elements, $k_1 < k_2$.
 By previous lemma, this would imply $\pi(j, k_1) = \pi(i, j) = \pi(j, k_2)$ which contradicts the definition of $j \to k_2$.
 
 ### Prop 5:
-For arbitrary $i$ and $\alpha$ we have $k_{\alpha + 2} (i) - k_{\alpha} (i) > \alpha / 2$, provided that $k_{\alpha +2}$ exists.
+For arbitrary $i$ and $\alpha$ we have $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) > \alpha$, provided that $k_{2\alpha + 3}$ exists.
 
 #### Proof:
-Let us argue by contradiction and assume $k_{\alpha + 2} (i) - k_{\alpha} (i) \leq \alpha / 2$.
-We know that $\pi(i, k_{\alpha + 1}) \wedge \pi(i, k_{\alpha + 2}) \geq \alpha$.
-Let $m$ be the greatest common divisor of $m = gcd(k_{\alpha + 2} - k_{\alpha + 1}, k_{\alpha + 1} - k_{\alpha})$. It is easy to see that $m \leq \alpha/2$ as a consequence of the Euclidean algorithm for the gdc and the assumption $k_{\alpha+2} - k_{\alpha} \leq 2\alpha$.
-Then $S$ is locally $m$-periodic around $i$, $k_{\alpha + 1}$ and $k_{\alpha + 2}$ in the sense that:
-$$S[x: x + m] = S[x + m: x + 2m] \qquad x = i, k_{\alpha + 1}, k_{\alpha + 2}$$
-To prove this, notice first that $S[i: i+2m] = S[k_{\alpha + 1}: k_{\alpha + 1} + 2m] = S[k_{\alpha + 2}: k_{\alpha + 2} + 2m]$ due to $\pi(i, k_{\alpha + 1}) \wedge \pi(i, k_{\alpha + 2}) \geq \alpha$ and $2m \leq \alpha$.
+CAN'T GET THIS TO WORK
 
-If the claim were fase, it would imply that $k_{\alpha +1} - k_{\alpha} \leq \alpha / 2$. Let $P = S[k_{\alpha}: k_{\alpha + 1}]$ but then $S[i + l] = S[i + k_{\alpha}]$
+
+Let us argue by contradiction and assume $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) \leq \alpha$.
+Let us define
+$$\mathcal{I} = \lbrace 0 \leq x < 2\alpha: S[k_{\alpha}: i + 2 \alpha] = S[i + x: i + x + 2 \alpha] \rbrace.$$
+We trivially have that $0 \in \mathcal{I}$. Moreover, our assumption together with properties of distinguished elements implies that $k_{\alpha + 3} - k_{\alpha + 1}, k_{\alpha + 2} - k_{\alpha + 1} \in \mathcal{I}$.
+
+Suppose now that $a, b \in \mathcal{I}$ and $a < b$. Then
+$$S[i: i + \alpha] = S[i + b: i + b + \alpha] = S[i + a + (b - a): i + a ((b - a) + \alpha)] = S[i + (b - a): i + (b - a) + \alpha]$$
+where the last equality is only true because $(b - a) + \alpha \leq 2 \alpha.$
+but $S[i + (b-a): i + 2 \alpha] =
+
+Then $b - a \in \mathcal{I}$ because:
 
 ### Algorithm 1:
 ```
