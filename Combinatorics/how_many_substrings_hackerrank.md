@@ -62,14 +62,31 @@ By previous lemma, this would imply $\pi(j, k_1) = \pi(i, j) = \pi(j, k_2)$ whic
 For arbitrary $i$ and $\alpha$ we have $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) > \alpha$, provided that $k_{2\alpha + 3}$ exists.
 
 #### Proof:
+
 CAN'T GET THIS TO WORK
 
 
-Let us argue by contradiction and assume $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) \leq \alpha$.
+Let us argue by contradiction and assume $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) \leq qq$.
 Let us define
-$$\mathcal{I} = \lbrace 0 \leq x < 2\alpha: S[k_{\alpha}: i + 2 \alpha] = S[i + x: i + x + 2 \alpha] \rbrace.$$
-We trivially have that $0 \in \mathcal{I}$. Moreover, our assumption together with properties of distinguished elements implies that $k_{\alpha + 3} - k_{\alpha + 1}, k_{\alpha + 2} - k_{\alpha + 1} \in \mathcal{I}$.
+$$\mathcal{I} = \lbrace 0 < x < 2\alpha: S[k_{\alpha}: i + 2 \alpha - x] = S[i + x: i + 2 \alpha] \rbrace.$$
+Now, by definition of $k_{\alpha + 1}$ and $k_{\alpha + 2}$
+it is easy to find that
+$$S[i: i + 2 \alpha] = S[k_{\alpha + 1}: k_{\alpha + 1} + 2 \alpha] = S[k_{\alpha + 2}: k_{\alpha + 2} + 2 \alpha].$$
 
+
+Since $k_{\alpha + 2} - k_{\alpha + 1} \leq 2 \alpha$ we in particular find:
+$$S[k_{\alpha + 1}: k_{\alpha+1} + 2\alpha - (k_{\alpha + 2} - k_{\alpha + 1})] = S[k_{\alpha + 2}: k_{\alpha +2} + 2 \alpha - (k_{\alpha + 2} - k_{\alpha + 1})].$$
+From this it follows that
+$$S[i: i + 2 \alpha - (k_{\alpha + 2} - k_{\alpha + 1})] = S[i + (k_{\alpha + 2} - k_{\alpha + 1}): i + 2 \alpha]$$
+which means that $k_{\alpha + 2} - k_{\alpha + 1} \in \mathcal{I}$. In an analogue way we find that
+$k_{\alpha + 3} - k_{\alpha + 2} \in \mathcal{I}$.
+
+Let now $m = \min \mathcal{I}$. We prove that $m$ divides all elements of $\mathcal{I}$. Let $x \in \mathcal{I}$ be arbitrary. Then
+
+WORKING ...
+
+
+ our assumption together with properties of distinguished elements implies that $k_{\alpha + 3} - k_{\alpha + 1}, k_{\alpha + 2} - k_{\alpha + 1} \in \mathcal{I}$.
 Suppose now that $a, b \in \mathcal{I}$ and $a < b$. Then
 $$S[i: i + \alpha] = S[i + b: i + b + \alpha] = S[i + a + (b - a): i + a ((b - a) + \alpha)] = S[i + (b - a): i + (b - a) + \alpha]$$
 where the last equality is only true because $(b - a) + \alpha \leq 2 \alpha.$
