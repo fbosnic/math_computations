@@ -28,7 +28,7 @@ $\pi(i, j) = \min_{x \in [m, M]}LCP[x]$ where $m := \min(lkp[i], lkp[j])$ and $M
 For any $i$, $j$ and $k$ if $\pi(i, j) > \pi(i, k)$ then $\pi(i, k) = \pi(j, k)$.
 
 #### Proof:
-Note that $\pi(i, j) > \pi(i, k) \geq \pi(i, j) \wedge \pi(j, k)$ and we must have $\pi(i, k) = \pi(j, k)$.
+Note that $\pi(i, j) > \pi(i, k) \geq \pi(i, j) \wedge \pi(j, k)$ and we must have $\pi(i, k) \geq \pi(j, k)$. On the other hand, $\pi(j, k) \geq \pi(i, j) \wedge \pi(i, k) = \pi(i,k)$ and hence $\pi(i, k) = \pi(j, k)$.
 
 ### Definintion 2:
 Let $i < k$ be arbitrary. $k$ is said to be distinguished for $i$, written $i \rightarrow k$, if
@@ -49,7 +49,7 @@ Let $k$ be distinguished for $i$ and $j$, $i < j$. Then
 2) $\pi(i, j) = \pi(j, k)$
 
 #### Proof:
-Clearly $i < j < k$. Suppose the contrary, that $\pi(i,k) \leq \pi(j,k)$. Then $\pi(i,j) \geq \min(\pi(i, k), \pi(j, k)) \geq \pi(i, k)$. But this contradicts the fact that $k$ is distinguished for $i$ and proves 1).\
+Clearly $i < j < k$. If we suppose that $\pi(i,k) \leq \pi(j,k)$, then $\pi(i,j) \geq \min(\pi(i, k), \pi(j, k)) \geq \pi(i, k)$. But this contradicts the fact that $k$ is distinguished for $i$ which proves 1).\
 2) follows immediately from one of the previous lemmas.
 
 ### Prop 4:
@@ -62,9 +62,9 @@ By previous lemma, this would imply $\pi(j, k_1) = \pi(i, j) = \pi(j, k_2)$ whic
 For arbitrary $i$ and $\alpha$ we have $k_{\alpha + 2} (i) - k_{\alpha} (i) > \alpha / 2$, provided that $k_{\alpha +2}$ exists.
 
 #### Proof:
-Let us argue by contradiction.
+Let us argue by contradiction and assume $k_{\alpha + 2} (i) - k_{\alpha} (i) \leq \alpha / 2$.
 We know that $\pi(i, k_{\alpha + 1}) \wedge \pi(i, k_{\alpha + 2}) \geq \alpha$.
-Let $m$ be the greatest common divisor of $m = gcd(k_{\alpha + 2} - k_{\alpha + 1}, k_{\alpha + 1} - k_{\alpha})$. It is easy to see that $m \leq \alpha/2$ as a consequence of the Euclidean algorithm for the gdc and the assumption $k_{alpha+2} - k_{\alpha} \leq 2\alpha$.
+Let $m$ be the greatest common divisor of $m = gcd(k_{\alpha + 2} - k_{\alpha + 1}, k_{\alpha + 1} - k_{\alpha})$. It is easy to see that $m \leq \alpha/2$ as a consequence of the Euclidean algorithm for the gdc and the assumption $k_{\alpha+2} - k_{\alpha} \leq 2\alpha$.
 Then $S$ is locally $m$-periodic around $i$, $k_{\alpha + 1}$ and $k_{\alpha + 2}$ in the sense that:
 $$S[x: x + m] = S[x + m: x + 2m] \qquad x = i, k_{\alpha + 1}, k_{\alpha + 2}$$
 To prove this, notice first that $S[i: i+2m] = S[k_{\alpha + 1}: k_{\alpha + 1} + 2m] = S[k_{\alpha + 2}: k_{\alpha + 2} + 2m]$ due to $\pi(i, k_{\alpha + 1}) \wedge \pi(i, k_{\alpha + 2}) \geq \alpha$ and $2m \leq \alpha$.
