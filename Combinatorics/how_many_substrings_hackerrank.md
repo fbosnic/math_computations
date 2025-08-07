@@ -35,13 +35,15 @@ Let $i < k$ be arbitrary. $k$ is said to be distinguished for $i$, written $i \r
 $$\pi(i, j) < \pi(i, k) \qquad \forall i < j < k$$
 *Note that $i+1$ is always distinguished for $i$*
 
-Moreover for $\alpha \in \N$, $k$ is said to be $\alpha$-distinguished for $i$, written $i \xrightarrow{\alpha} k$  if $k$ is distinguished for $i$ and there are exactly $\alpha - 1$ indices in the interval $(i, k)$ which are distinguished for $i$.
+Moreover for $\alpha \in \N_{0}$, $k$ is said to be $\alpha$-distinguished for $i$, written $i \xrightarrow{\alpha} k$
+if $k$ is distinguished for $i$ and there are exactly $\alpha$ indices in the interval $(i, k)$
+which are distinguished for $i$.
 Clearly, $\alpha$-distinguished index for $i$ is unique if it exists. Let us denote it by $k_\alpha(i)$.
 
 ### Corollary 1.2:
 For all $i$ and $\alpha$:
-* $k_1(i) = i + 1$
-* $\pi(k_\alpha(i), i) \geq \alpha - 1$
+* $k_0(i) = i + 1$
+* $\pi(k_\alpha(i), i) \geq \alpha$
 
 ### Lemma 3:
 Let $k$ be distinguished for $i$ and $j$, $i < j$. Then
@@ -63,12 +65,29 @@ By previous lemma, this would imply $\pi(j, k_1) = \pi(i, j) = \pi(j, k_2)$ whic
 A finite sequence $S$ of length $L$ is said to be $p$-periodic if
 $$S[0:L-p] = S[p:L] $$
 
-### Corolary 5.2:
+### Corolary 5.1:
 If a finite sequence $S$ of length $L$ is $p$-periodic then every prefix of $S$ is also $p$ periodic. That is,
 $$ S[0: l-p] = S[p: l] \quad \forall p < l < L $$
 
+### Definition 5.2
+Let us denote concatenation of string $S$ with itself $n$-times by $n S$. That is,
+$$nS = \underbrace{SS \ldots S}_{n-\textnormal{times}}$$
 
-### Lemma 5.3
+### Corolary 5.3:
+If a finite sequence $S$ of length $L$ is $p$-periodic and $L = q p + r$ for some $q, r \in \N_0$
+from division with reminder theorem, then
+$$ S = q S[0:p] S[0:r]$$
+In particular, $S[0:np] = nS[0:p]$ for every $n \in \N_0$, $n < L/p$.
+
+#### Proof:
+Let $0 \leq x \leq L$ be arbitrary and $x = q' p + r'$ (again by division with reminder).
+By applying $p$-periodicity of $S$ $q'$ times we have
+$$S[x] = S[x - p] = S[x - 2p] = \ldots = S[x - q'p] = S[r']$$
+On the other hand, the $x$-th element of the string on the right hand side is
+$$(qS[0:p] S[0:r])[x] = S[r']$$
+which completes the proof. The second statment is a particular case.
+
+### Lemma 5.4
 Let $S$ of lenght $L$ be a sequence that is both $p$- and $r$-periodic for arbitrary $p < r$ such that $L > p + r$.
 Let $q$ be the reminder of dividing $r$ with $p$ and assume $q \neq 0$.
 Then $S[0:L-r+q]$ is $q$-periodic.
@@ -81,22 +100,22 @@ by $r$-periodicity. Since $L - r = L - xp - q$ we now have:
 $$ S[q: L - r + q] = S[0: L - r] $$
 which is $q$-periodicity of substring $S[0:L - r + q]$ and the proof is complete.
 
-### Lemma 5.4:
-Let $S$ of lenght $L$ be a sequence that is both $p$-periodic and $r$-periodic, $p \neq r$.
-If $L > r + p$ then $S[0:L-p-r]$ is also $\textnormal{gcd}(p, r)$-periodic.
-Here $\textnormal{gcd}$ is the greatest common divisor of $p$ and $r$.
+### Lemma 5.5:
+Let $S$ of length $L$ be a sequence that is both $p$-periodic and $r$-periodic, $p \neq r$.
+Let also $d := \textnormal{gcd}(p, r)$ be the greatest common divisor of $p$ and $r$. \
+If $L > r + p$ then $S[0:L - p - r + d]$ is also $d$-periodic.
 
 #### Proof:
 Suppose, without the loss of generality, that $p < r$. We'll follow the Euclidean algorithm.
 Let us denote $p_1 := p$, $r_1 := r$, $L_1 := L$ and let $r_2$, $0 \leq r_2 < r_1$ be the reminder
 of dividing $r_1$ by $p_1$. Let us also assume that $r_2 \neq 0$ and deal with this case later.
-By previous lemma, we find that $S[L_1 - r_1 + r_2]$ is $r_2$ periodic.
-Note also that $\textnormal{gcd}(p_1, r_2) = \textnormal{gcd}(p_1, r_1)$ by euclidean algorithm. \
+By previous lemma, we find that $S[L_1 - r_1 + r_2]$ is $r_2$-periodic.
+Note also that $\textnormal{gcd}(p_1, r_2) = \textnormal{gcd}(p_1, r_1) = d$ by euclidean algorithm. \
 Let $p_2$ now be the reminder of dividing $p_1$ with $r_2$ and assume again that $p_2 \neq 0$.
 Previous lemma with $r_2, p_1, L_1 - r_1 + r_2$ in place of $p, r, L$
-now tells us that $S[L_1, r_1 - p_1 + r_2 + p_2]$ is $p_2$-periodic
+now tells us that $S[0: L_1 - r_1 - p_1 + r_2 + p_2]$ is $p_2$-periodic
 (note that the requirement $L_1 - r_1 + r_2 > p_1 + r_2$ is equivalent to the initial assumption $L > p + r$).
-Again, we also have: $\textnormal{gcd}(p_2, r_2) = \textnormal{gcd}(p_1, r_2) = \textnormal{gcd}(p_1, r_1)$. \
+Again, we also have: $\textnormal{gcd}(p_2, r_2) = \textnormal{gcd}(p_1, r_2) = \textnormal{gcd}(p_1, r_1) = d$. \
 We are now in exactly the same setting as at the beginning of the proof with $p_1$, $r_1$ and $L_1$ replaced by
 $p_2$, $r_2$ and $L_2 := L_1 - p_1 - r_1 + p_2 + r_2$.
 The procedure can be repeated to get sequences $p_1 > p_2 > p_3 > \ldots \geq 0$, $r_1 > r_2 > r_3 > \ldots \geq 0$
@@ -104,65 +123,68 @@ and $L_1 > L_2 > L_3 > \ldots \geq 0$ until either $p_{k+1}=0$ or $r_{k+1} = 0$ 
 which must happen eventually since these sequences are strictly decreasing. Notice that this covers the
 casese $r_2 = 0$ and $p_2 = 0$ which were skipped in the initial part of the proof. \
 So far we have proved that $S[0: L_k]$ will be both $p_k$- and $r_k$-periodic,
-$\textnormal{gcd}(p_k, r_k) = \textnormal{gcd}(p, r)$ and
+$\textnormal{gcd}(p_k, r_k) = d$ and
 $$ L_k = L - p - r + p_k + r_k $$
 where the last two facts follow from telescoping or by induction. \
-Assume first that $r_{k+1} = 0$. But in that case $p_k$ divides $r_k$ and $\textnormal{gcd}(p_k, r_k) = p_k$ and the
-statement of the theorem is true since we know that $S[0:L_k]$ is $p_k$-periodic, $L_k > L - p - r$ and
-$\textnormal{gcd}(p, r) = p_k$. \
+Assume first that $r_{k+1} = 0$. But in that case $p_k$ divides $r_k$ and hence $d = \textnormal{gcd}(p_k, r_k) = p_k$.
+By substituting $d = p_k$ we see that that $S[0:L_k]$ is $d$-periodic with $L_k > L - p - r + d$ which is
+exactly the statement of the lemma. \
 Alternatively, suppose that $r_{k+1} > 0$ but $p_{k+1} = 0$. Using the previous lemma one more time, we find that
 $S[0: L_k - r_k + r_{k+1}]$ is $r_{k+1}$-periodic.
 Since $p_{k+1} = 0$, $r_{k+1}$ divides $p_k$ and hence $\textnormal{gcd}(p_k, r_{k+1}) = r_{k+1}$.
 By euclidean algorithm we find that
-$\textnormal{gcd}(p_k, r_{k+1}) = \textnormal{gcd}(p_k, r_k) = \textnormal{gcd}(p, r)$ which proves the statement
-in this case as well since $L_k - r_k + r_{k+1} = L - p - r + p_k + r_{k+1} \geq L - p - r$.
+$r_{k+1} = \textnormal{gcd}(p_k, r_{k+1}) = \textnormal{gcd}(p_k, r_k) = \textnormal{gcd}(p, r) = d$
+which proves the statement in this case as well, since
+$L_k - r_k + r_{k+1} = L - p - r + p_k + r_{k+1} > L - p - r + d$.
 
-### Lemma 5.5:
+### Lemma 5.6:
 Let $i$ be arbitrary and let $\alpha, \beta \in N$ be such that $\alpha < \beta$.
-If $k_\beta - k_\alpha < \alpha$ then $S[i:i + \alpha]$ is $(k_\beta - k_\alpha)$-periodic.
+If $k_\beta - k_\alpha < \alpha$ then $S[i:i + \pi(k_\alpha, i)]$ is $(k_\beta - k_\alpha)$-periodic.
 
 #### Proof
-Let By definition of distinguished element $k_\beta$ (note that $\beta > \alpha$) we compute
-$$ S[i: i + \alpha - (k_\beta - k_\alpha)] = S[k_\beta: k_\beta + \alpha - (k_\beta - k_\alpha)] =
-S[k_\beta: k_\alpha + \alpha]$$
+By definition of distinguished element $k_\beta$ (note that $\pi(k_\beta,i) > \pi(k_\alpha, i)$) we compute
+$$ S[i: i + \pi(k_\alpha, i) - (k_\beta - k_\alpha)] = S[k_\beta: k_\beta + \pi(k_\alpha,i) - (k_\beta - k_\alpha)] =
+S[k_\beta: k_\alpha + \pi(k_\alpha, i)]$$
 Morover, by definition of $k_\alpha$ we now find:
-$$ \ldots = S[k_\alpha + (k_\beta - k_\alpha): k_\alpha + \alpha] = S[i + (k_\beta - k_\alpha): i + \alpha)] $$
-which proves $S[i: i + \alpha]$ is $(k_\beta - k_\alpha)$-periodic.
+$$ \ldots = S[k_\alpha + (k_\beta - k_\alpha): k_\alpha + \pi(k_\alpha, i)]
+= S[i + (k_\beta - k_\alpha): i + \pi(k_\alpha, i)] $$
+which proves $S[i: i + \pi(k_\alpha, i)]$ is $(k_\beta - k_\alpha)$-periodic.
 
-### Theorem 5.1:
-For arbitrary $i$ and $\alpha$ we have $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) > \alpha$, provided that $k_{2\alpha + 3}$ exists.
+### Theorem 5.7:
+For arbitrary $i$ and $\alpha$ we have $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) \geq \alpha$,
+provided that $k_{2\alpha + 3}$ exists.
 
 #### Proof:
+Define $p := k_2 - k_1$ and $r := k_3 - k_2$ and denote $d := \textnormal{gcd}(p, r)$.
+We argue by contradiction and assume that $p + r = k_3 - k_1 < \alpha$. \
+By previous lemma we know that $S[i: i + \pi(k_1, i)]$ is both $p$- and $r$-periodic.
+Since $\pi(k_1, i) - p - r \geq 2\alpha - p + r > \alpha$, by second to last lemma we find that
+$S[i: \alpha + d]$ is $d$-periodic and so are
+$S[k_1: k_1 + \alpha + d]$, $S[k_2: k_2 + \alpha + d]$ and $S[k_3: k_3 + \alpha + d]$. \
+Furthermore, let us denot denote $R := S[i: i + d]$.
+As $(k_2 - k_1)$ and $(k_3 - k_2)$ are both smaller than $\alpha + d$ and divisible by $d$,
+one of the previous corollaries shows that
+$$S[k_1: k_2] = S[i: i + (k_2 - k_1)] = \frac{k_2 - k_1}{d} R $$
+and similarly that
+$$S[k_2: k_3] = S[i: i + (k_3 - k_2)] = \frac{k_3 - k_2}{d} R$$
+But then also
+$$S[k_1: k_3] = \frac{k_3 - k_1}{d} R$$
+Now, by previous lemma, we also know that $S[k_2: k_2 + \pi(k_2, i)]$ is $(k_3 - k_2)$-periodic
+and hence that
+$$S[k_2: k_2 + \pi(k_2, i)] = q'S[i: i + (k_3 - k_2)] + S[i:i + r']$$
+for $n$ and $r$ such that $\pi(k_2, i) = q' (k_3 - k_2) + r'$.
+But then we also have (since $r' < \alpha$)
+$$S[k_1: k_2 + \pi(k_2, i)] = S[k_1: k_2] S[k_2: k_2: \pi(k_2, i)].$$
+where $r' = q'' d + r$ is another division with reminder.
+We are only interested in the fact that there are $q, r \in \N_0$ such that
+$$S[k_1: k_2 + \pi(k_2, i)] = q R + R[0: r].$$
+But from the last equation we read of that
+$$S[k_1: k_1 + \pi(k_2, i)] = S[k_2: k_2 + \pi(k_2, i)] $$
+but this would imply that $\pi(k_1, i) \geq \pi(k_2, i)$ which contradicts the definition of $k_2$
+and completes the proof.
 
 CAN'T GET THIS TO WORK - LET'S TRY AGIAN
 
-Let us argue by contradiction and assume $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) \leq qq$.
-Let us define
-$$\mathcal{I} = \lbrace 0 < x < 2\alpha: S[i: i + 2 \alpha] \textnormal{ is } x \textnormal{ periodic} \rbrace.$$
-Now, by definition of $k_{\alpha + 1}$ and $k_{\alpha + 2}$
-we know that
-$$S[i: i + 2 \alpha] = S[k_{\alpha + 1}: k_{\alpha + 1} + 2 \alpha] = S[k_{\alpha + 2}: k_{\alpha + 2} + 2 \alpha].$$
-
-Denoting $y := k_{\alpha + 2} - k_{\alpha + 1}$ we have $y \leq 2 \alpha$ and the second inequality can be rewritten as:
-$$S[k_{\alpha + 1}: k_{\alpha+1} + 2\alpha] = S[k_{\alpha + 1} + y: k_{\alpha + 1} + y + 2 \alpha]$$
-which is the same as saying that $S[k_{\alpha+1}: 2\alpha + y]$ is $y$ periodic and consequently that $S[i: 2\alpha + y]
-From this it follows that
-$$S[i: i + 2 \alpha - (k_{\alpha + 2} - k_{\alpha + 1})] = S[i + (k_{\alpha + 2} - k_{\alpha + 1}): i + 2 \alpha]$$
-which means that $k_{\alpha + 2} - k_{\alpha + 1} \in \mathcal{I}$. In an analogue way we find that
-$k_{\alpha + 3} - k_{\alpha + 2} \in \mathcal{I}$.
-
-Let now $m = \min \mathcal{I}$. We prove that $m$ divides all elements of $\mathcal{I}$. Let $x \in \mathcal{I}$ be arbitrary. Then
-
-WORKING ...
-
-
- our assumption together with properties of distinguished elements implies that $k_{\alpha + 3} - k_{\alpha + 1}, k_{\alpha + 2} - k_{\alpha + 1} \in \mathcal{I}$.
-Suppose now that $a, b \in \mathcal{I}$ and $a < b$. Then
-$$S[i: i + \alpha] = S[i + b: i + b + \alpha] = S[i + a + (b - a): i + a ((b - a) + \alpha)] = S[i + (b - a): i + (b - a) + \alpha]$$
-where the last equality is only true because $(b - a) + \alpha \leq 2 \alpha.$
-but $S[i + (b-a): i + 2 \alpha] =
-
-Then $b - a \in \mathcal{I}$ because:
 
 ### Algorithm 1:
 ```
