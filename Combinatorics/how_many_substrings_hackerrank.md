@@ -58,24 +58,87 @@ For any $i < j$ there is at most one $k$ which is distinguished for both $i$ and
 Suppose there are 2 such distinguished elements, $k_1 < k_2$.
 By previous lemma, this would imply $\pi(j, k_1) = \pi(i, j) = \pi(j, k_2)$ which contradicts the definition of $j \to k_2$.
 
-### Prop 5:
+
+### Def 5.0:
+A finite sequence $S$ of length $L$ is said to be $p$-periodic if
+$$S[0:L-p] = S[p:L] $$
+
+### Corolary 5.2:
+If a finite sequence $S$ of length $L$ is $p$-periodic then every prefix of $S$ is also $p$ periodic. That is,
+$$ S[0: l-p] = S[p: l] \quad \forall p < l < L $$
+
+
+### Lemma 5.3
+Let $S$ of lenght $L$ be a sequence that is both $p$- and $r$-periodic for arbitrary $p < r$ such that $L > p + r$.
+Let $q$ be the reminder of dividing $r$ with $p$ and assume $q \neq 0$.
+Then $S[0:L-r+q]$ is $q$-periodic.
+
+#### Proof
+Let $x \in \N$ be such that $r = xp + q$.
+We apply $p$-periodicity $x$ times to get $S[0: L - xp] = S[xp: L]$.
+Looking at the substring $[q:]$ of both sides leads to $S[q: L-xp] = S[r: L]$ but this is equal to $S[0: L - r]$
+by $r$-periodicity. Since $L - r = L - xp - q$ we now have:
+$$ S[q: L - r + q] = S[0: L - r] $$
+which is $q$-periodicity of substring $S[0:L - r + q]$ and the proof is complete.
+
+### Lemma 5.4:
+Let $S$ of lenght $L$ be a sequence that is both $p$-periodic and $r$-periodic, $p \neq r$.
+If $L > r + p$ then $S[0:L-p-r]$ is also $\textnormal{gcd}(p, r)$-periodic.
+Here $\textnormal{gcd}$ is the greatest common divisor of $p$ and $r$.
+
+#### Proof:
+Suppose, without the loss of generality, that $p < r$. We'll follow the Euclidean algorithm.
+Let us denote $p_1 := p$, $r_1 := r$, $L_1 := L$.
+By division with reminder, let $r_1 = x p_1 + r_2$ for some $x \in \N$ and $0 \leq r_2 < r_1$.
+Let us also assume that $r_2 \neq 0$ and deal with this case later.
+Notice now that applying $p_1$-periodicity $x$ times leads to $S[0: L_1 - xp_1] = S[xp_1: L_1]$.
+Looking at the substring $[r_2:]$ of both sides leads to $S[r_2: L_1-xp_1] = S[r_1: L_1]$ but this is equal to $S[0: L_1 - r_1]$
+by $r_1$-periodicity. Since $L_1 - r_1 = L_1 - xp_1 - r_2$ we now have:
+$$ S[r_2: L_1 - r_1 + r_2] = S[0: L _1- r_1] $$
+which is $r_2$-periodicity of substring $S[0:L_1 - r_1 + r_2]$.
+Note also that $\textnormal{gcd}(p_1, r_2) = \textnormal{gcd}(p_1, r_1)$ by euclidean algorithm. \
+By division with reminder again, let now $0 \leq p_2 < p_1$ and $y$ be such that $p_1 = y r_2 + p_2$.
+We again assume $p_2 \neq 0$ in which case we can use the same procedure with $r_2$,
+$p_1$ and $L_1 - r_1 + r_2$ in place of $p_1$, $r_1$ and $L_1$
+(note that requirement $L_1 - r_1 + r_2 > p_1 + r_2$ is equivalent to the initial assumption $L > p + r$)
+to find that $S[0:L - r_1 + r_2 - p_1 + p_2]$ is $p_2$-periodic and
+$\textnormal{gcd}(p_2, r_2) = \textnormal{gcd}(p_1, r_2) = \textnormal{gcd}(p_1, r_1)$. \
+We are now in exactly the same setting as at the beginning of the proof with $p_1$, $r_1$ and $L_1$ replaced by
+$p_2$, $r_2$ and $L_2 := L_1 - p_1 - r_1 + p_2 + r_2$.
+The procedure can be repeated to get sequences $p_1 > p_2 > p_3 > \ldots \geq 0$ and $r_1 > r_2 > r_3 > \ldots \geq 0$
+and $L_1 > L_2 > L_3 > \ldots \geq 0$ until either $p_{k+1}=0$ or $r_{k+1} = 0$ for some $k \in \N$,
+which must happen eventually since these sequences are strictly decreasing. Notice that this covers the
+casese $r_2 = 0$ and $p_2 = 0$ which were skipped in the initial part of the proof.
+So far we have proved that $S[0: L_k]$ will be both $p_k$- and $r_k$-periodic,
+$\textnormal{gcd}(p_k, r_k) = \textnormal{gcd}(p, r)$ and
+$$ L_k = L - p - r + p_k + r_k $$
+where the last two facts follow from telescoping or by induction.
+Assume first that $r_{k+1} = 0$. But in that case $p_k$ divides $r_k$ and $\textnormal{gcd}(p_k, r_k) = p_k$ and the
+statement of the theorem is true since we know that $S[0:L_k]$ is $p_k$-periodic, $L_k > L - p - r$ and
+$\textnormal{gcd}(p, r) = p_k$.
+Alternatively, suppose that $p_{k+1} = 0$. We now repeat the argument from the intermediate step of construction of the
+sequence.
+
+in $r_{k+1}$ divides $p_k$
+
+
+### Prop 5.1:
 For arbitrary $i$ and $\alpha$ we have $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) > \alpha$, provided that $k_{2\alpha + 3}$ exists.
 
 #### Proof:
 
-CAN'T GET THIS TO WORK
-
+CAN'T GET THIS TO WORK - LET'S TRY AGIAN
 
 Let us argue by contradiction and assume $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) \leq qq$.
 Let us define
-$$\mathcal{I} = \lbrace 0 < x < 2\alpha: S[k_{\alpha}: i + 2 \alpha - x] = S[i + x: i + 2 \alpha] \rbrace.$$
+$$\mathcal{I} = \lbrace 0 < x < 2\alpha: S[i: i + 2 \alpha] \textnormal{ is } x \textnormal{ periodic} \rbrace.$$
 Now, by definition of $k_{\alpha + 1}$ and $k_{\alpha + 2}$
-it is easy to find that
+we know that
 $$S[i: i + 2 \alpha] = S[k_{\alpha + 1}: k_{\alpha + 1} + 2 \alpha] = S[k_{\alpha + 2}: k_{\alpha + 2} + 2 \alpha].$$
 
-
-Since $k_{\alpha + 2} - k_{\alpha + 1} \leq 2 \alpha$ we in particular find:
-$$S[k_{\alpha + 1}: k_{\alpha+1} + 2\alpha - (k_{\alpha + 2} - k_{\alpha + 1})] = S[k_{\alpha + 2}: k_{\alpha +2} + 2 \alpha - (k_{\alpha + 2} - k_{\alpha + 1})].$$
+Denoting $y := k_{\alpha + 2} - k_{\alpha + 1}$ we have $y \leq 2 \alpha$ and the second inequality can be rewritten as:
+$$S[k_{\alpha + 1}: k_{\alpha+1} + 2\alpha] = S[k_{\alpha + 1} + y: k_{\alpha + 1} + y + 2 \alpha]$$
+which is the same as saying that $S[k_{\alpha+1}: 2\alpha + y]$ is $y$ periodic and consequently that $S[i: 2\alpha + y]
 From this it follows that
 $$S[i: i + 2 \alpha - (k_{\alpha + 2} - k_{\alpha + 1})] = S[i + (k_{\alpha + 2} - k_{\alpha + 1}): i + 2 \alpha]$$
 which means that $k_{\alpha + 2} - k_{\alpha + 1} \in \mathcal{I}$. In an analogue way we find that
