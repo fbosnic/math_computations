@@ -4,7 +4,7 @@
 ### Setup
 Let:
 * $\mathcal{A}$ be a countable alphabet
-* $N \in \N$, $S = s_1 \ldots s_N \in \mathcal{A}$ a string of characters
+* $N \in \N$, $S = c_1 \ldots c_N \in \mathcal{A}$ a string of characters
 * $SA \equiv SA(S)$ the suffix array of $S$ and $LCP \equiv LCP(S)$ the corresponding longest common prefix array
 * $lkp \equiv lkp(S)$ the lookup table from $S$ to $SA$ defined by $lkp[SA[k]] = k$
 
@@ -17,8 +17,8 @@ _Note - it is likely that the desired complexity is slightly below $\mathcal{O}(
 Whether an exponent lower than $\frac{3}{2}$ is required remains unclear._
 
 ### Definition 1:
-Let $i, j \in \N$, define
-$\pi(i, j) = \min_{x \in [m, M]}LCP[x]$ where $m := \min(lkp[i], lkp[j])$ and $M := \max(lkp[i], lkp[j])$
+Let $i, j \in \N$, define $\pi(i, j)$ to be the lenght of the common prefix of $S[i:]$ and $S[j:]$.
+That is, $\pi(i, j) = \min_{x \in [m, M]}LCP[x]$ where $m := \min(lkp[i], lkp[j])$ and $M := \max(lkp[i], lkp[j])$
 
 ### Corollary 1.1:
 * $\pi(i, j) = \pi(j, i)$
