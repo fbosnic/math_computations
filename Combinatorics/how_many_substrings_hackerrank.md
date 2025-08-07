@@ -151,36 +151,39 @@ $$ \ldots = S[k_\alpha + (k_\beta - k_\alpha): k_\alpha + \pi(k_\alpha, i)]
 which proves $S[i: i + \pi(k_\alpha, i)]$ is $(k_\beta - k_\alpha)$-periodic.
 
 ### Theorem 5.7:
-For arbitrary $i$ and $\alpha$ we have $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) \geq \alpha$,
-provided that $k_{2\alpha + 3}$ exists.
+For arbitrary $i$ and $\alpha$ we have $k_{2\alpha + 2} (i) - k_{2\alpha} (i) \geq \alpha$,
+provided that $k_{2\alpha + 2}$ exists.
 
 #### Proof:
-Define $p := k_2 - k_1$ and $r := k_3 - k_2$ and denote $d := \textnormal{gcd}(p, r)$.
-We argue by contradiction and assume that $p + r = k_3 - k_1 < \alpha$. \
-By previous lemma we know that $S[i: i + \pi(k_1, i)]$ is both $p$- and $r$-periodic.
-Since $\pi(k_1, i) - p - r \geq 2\alpha - p + r > \alpha$, by second to last lemma we find that
+Define $p := k_{2\alpha + 1} - k_{2\alpha}$ and $r := k_{2\alpha + 2} - k_{2\alpha + 1}$
+and denote $d := \textnormal{gcd}(p, r)$.
+We argue by contradiction and assume that $p + r = k_{2\alpha + 2} - k_{2\alpha} < \alpha$. \
+Applying the previous lemma two times, we find that $S[i: i + \pi(k_{2\alpha}, i)]$ is both $p$- and $r$-periodic.
+Since $\pi(k_{2\alpha}, i) - p - r \geq 2\alpha - p + r > \alpha$, by second to last lemma we find that
 $S[i: \alpha + d]$ is $d$-periodic and so are
-$S[k_1: k_1 + \alpha + d]$, $S[k_2: k_2 + \alpha + d]$ and $S[k_3: k_3 + \alpha + d]$. \
+$S[k_{2\alpha}: k_{2\alpha} + \alpha + d]$, $S[k_{2\alpha + 1}: k_{2\alpha + 1} + \alpha + d]$
+and $S[k_{2\alpha + 2}: k_{2\alpha + 2} + \alpha + d]$. \
 Furthermore, let us denot denote $R := S[i: i + d]$.
 As $(k_2 - k_1)$ and $(k_3 - k_2)$ are both smaller than $\alpha + d$ and divisible by $d$,
 one of the previous corollaries shows that
-$$S[k_1: k_2] = S[i: i + (k_2 - k_1)] = \frac{k_2 - k_1}{d} R $$
-and similarly that
-$$S[k_2: k_3] = S[i: i + (k_3 - k_2)] = \frac{k_3 - k_2}{d} R$$
-But then also
-$$S[k_1: k_3] = \frac{k_3 - k_1}{d} R$$
+$$S[k_1: k_2] = S[i: i + (k_2 - k_1)] = \frac{k_2 - k_1}{d} R \quad \textnormal{ and } \quad S[k_2: k_3] = S[i: i + (k_3 - k_2)] = \frac{k_3 - k_2}{d} R$$
 Now, by previous lemma, we also know that $S[k_2: k_2 + \pi(k_2, i)]$ is $(k_3 - k_2)$-periodic
 and hence that
-$$S[k_2: k_2 + \pi(k_2, i)] = q'S[i: i + (k_3 - k_2)] + S[i:i + r']$$
-for $n$ and $r$ such that $\pi(k_2, i) = q' (k_3 - k_2) + r'$.
-But then we also have (since $r' < \alpha$)
-$$S[k_1: k_2 + \pi(k_2, i)] = S[k_1: k_2] S[k_2: k_2: \pi(k_2, i)].$$
-where $r' = q'' d + r$ is another division with reminder.
+$$S[k_2: k_2 + \pi(k_2, i)] = q'S[k_2: k_2 + (k_3 - k_2)] + S[k_2:k_2 + r']$$
+for $q'$ and $r'$ such that $\pi(k_2, i) = q' (k_3 - k_2) + r'$. \
+But then by definition of $k_2$ as distinct element for $i$
+$$S[k_2: k_2 + \pi(k_2, i)] = q'S[i: i + (k_3 - k_2)] + S[i:i + r'] = q'$$
+Moreover
+$$S[k_1: k_2 + \pi(k_2, i)] = S[k_1: k_2] + S[k_2: k_2 + \pi(k_2, i)] =
+\frac{k_2 - k_1}{d} R + q'S[i: i + (k_3 - k_2)] + S[i:i + r']
+$$
+and, together with another decomposition $r' = q'' d + r$, we find
+$$ \ldots = \frac{k_2 - k_1}{d} R + \frac{q'(k_3 - k_2)}{d} R + q'' R  + S[i:i + r] $$
 We are only interested in the fact that there are $q, r \in \N_0$ such that
 $$S[k_1: k_2 + \pi(k_2, i)] = q R + R[0: r].$$
-But from the last equation we read of that
+From this equation we can read of that
 $$S[k_1: k_1 + \pi(k_2, i)] = S[k_2: k_2 + \pi(k_2, i)] $$
-but this would imply that $\pi(k_1, i) \geq \pi(k_2, i)$ which contradicts the definition of $k_2$
+which implies $\pi(k_1, i) \geq \pi(k_2, i)$ which contradicts the definition of $k_2$
 and completes the proof.
 
 CAN'T GET THIS TO WORK - LET'S TRY AGIAN
