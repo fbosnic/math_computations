@@ -117,8 +117,19 @@ By euclidean algorithm we find that
 $\textnormal{gcd}(p_k, r_{k+1}) = \textnormal{gcd}(p_k, r_k) = \textnormal{gcd}(p, r)$ which proves the statement
 in this case as well since $L_k - r_k + r_{k+1} = L - p - r + p_k + r_{k+1} \geq L - p - r$.
 
+### Lemma 5.5:
+Let $i$ be arbitrary and let $\alpha, \beta \in N$ be such that $\alpha < \beta$.
+If $k_\beta - k_\alpha < \alpha$ then $S[i:i + \alpha]$ is $(k_\beta - k_\alpha)$-periodic.
 
-### Prop 5.1:
+#### Proof
+Let By definition of distinguished element $k_\beta$ (note that $\beta > \alpha$) we compute
+$$ S[i: i + \alpha - (k_\beta - k_\alpha)] = S[k_\beta: k_\beta + \alpha - (k_\beta - k_\alpha)] =
+S[k_\beta: k_\alpha + \alpha]$$
+Morover, by definition of $k_\alpha$ we now find:
+$$ \ldots = S[k_\alpha + (k_\beta - k_\alpha): k_\alpha + \alpha] = S[i + (k_\beta - k_\alpha): i + \alpha)] $$
+which proves $S[i: i + \alpha]$ is $(k_\beta - k_\alpha)$-periodic.
+
+### Theorem 5.1:
 For arbitrary $i$ and $\alpha$ we have $k_{2\alpha + 3} (i) - k_{2\alpha + 1} (i) > \alpha$, provided that $k_{2\alpha + 3}$ exists.
 
 #### Proof:
