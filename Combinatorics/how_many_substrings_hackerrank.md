@@ -164,29 +164,30 @@ $S[i: \alpha + d]$ is $d$-periodic and so are
 $S[k_{2\alpha}: k_{2\alpha} + \alpha + d]$, $S[k_{2\alpha + 1}: k_{2\alpha + 1} + \alpha + d]$
 and $S[k_{2\alpha + 2}: k_{2\alpha + 2} + \alpha + d]$. \
 Furthermore, let us denot denote $R := S[i: i + d]$.
-As $(k_2 - k_1)$ and $(k_3 - k_2)$ are both smaller than $\alpha + d$ and divisible by $d$,
+As $p$ and $r$ are both smaller than $\alpha + d$ and divisible by $d$,
 one of the previous corollaries shows that
-$$S[k_1: k_2] = S[i: i + (k_2 - k_1)] = \frac{k_2 - k_1}{d} R \quad \textnormal{ and } \quad S[k_2: k_3] = S[i: i + (k_3 - k_2)] = \frac{k_3 - k_2}{d} R$$
-Now, by previous lemma, we also know that $S[k_2: k_2 + \pi(k_2, i)]$ is $(k_3 - k_2)$-periodic
+$$S[k_{2\alpha}: k_{2\alpha + 1}] = S[i: i + p] = \frac{p}{d} R \quad \textnormal{ and }
+ \quad S[k_{2\alpha + 1}: k_{\alpha + 2}] = S[i: i + r] = \frac{r}{d} R$$
+Now, by previous lemma, we also know that $S[k_2: k_2 + \pi(k_2, i)]$ is $r$-periodic
 and hence that
-$$S[k_2: k_2 + \pi(k_2, i)] = q'S[k_2: k_2 + (k_3 - k_2)] + S[k_2:k_2 + r']$$
-for $q'$ and $r'$ such that $\pi(k_2, i) = q' (k_3 - k_2) + r'$. \
-But then by definition of $k_2$ as distinct element for $i$
-$$S[k_2: k_2 + \pi(k_2, i)] = q'S[i: i + (k_3 - k_2)] + S[i:i + r'] = q'$$
+$$S[k_{2\alpha + 1}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] =
+q''S[k_{2\alpha +1}: k_{2\alpha + 1} + r] + S[k_{2\alpha +1}:k_{2\alpha + 1} + r'']$$
+for $a'$ and $b'$ such that $\pi(k_{\alpha +1}, i) = a' r + b'$. \
+But then by definition of $k_2$ as distinct element for $i$ we have
+$$S[k_{2\alpha + 1}: k_2 + \pi(k_{2\alpha + 1}, i)] = q'S[i: i + r] + S[i:i + r'] = q'$$
 Moreover
-$$S[k_1: k_2 + \pi(k_2, i)] = S[k_1: k_2] + S[k_2: k_2 + \pi(k_2, i)] =
-\frac{k_2 - k_1}{d} R + q'S[i: i + (k_3 - k_2)] + S[i:i + r']
+$$S[k_{2\alpha}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] = S[k_{2\alpha}: k_{2\alpha + 1}]
++ S[k_{2\alpha + 1}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] =
+\frac{p}{d} R + q'S[i: i + r] + S[i:i + r']
 $$
 and, together with another decomposition $r' = q'' d + r$, we find
-$$ \ldots = \frac{k_2 - k_1}{d} R + \frac{q'(k_3 - k_2)}{d} R + q'' R  + S[i:i + r] $$
+$$ \ldots = \frac{p}{d} R + \frac{q'r}{d} R + q'' R  + S[i:i + r] $$
 We are only interested in the fact that there are $q, r \in \N_0$ such that
-$$S[k_1: k_2 + \pi(k_2, i)] = q R + R[0: r].$$
+$$S[k_{2\alpha}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] = q R + R[0: r].$$
 From this equation we can read of that
-$$S[k_1: k_1 + \pi(k_2, i)] = S[k_2: k_2 + \pi(k_2, i)] $$
-which implies $\pi(k_1, i) \geq \pi(k_2, i)$ which contradicts the definition of $k_2$
+$$S[k_{2\alpha}: k_{2\alpha} + \pi(k_{2\alpha + 1}, i)] = S[k_{2\alpha + 1}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] $$
+which implies $\pi(k_{2\alpha}, i) \geq \pi(k_{2\alpha + 1}, i)$, contradicts the definition of $k_{2\alpha + 1}$
 and completes the proof.
-
-CAN'T GET THIS TO WORK - LET'S TRY AGIAN
 
 
 ### Algorithm 1:
