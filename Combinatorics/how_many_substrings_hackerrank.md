@@ -88,38 +88,34 @@ Here $\textnormal{gcd}$ is the greatest common divisor of $p$ and $r$.
 
 #### Proof:
 Suppose, without the loss of generality, that $p < r$. We'll follow the Euclidean algorithm.
-Let us denote $p_1 := p$, $r_1 := r$, $L_1 := L$.
-By division with reminder, let $r_1 = x p_1 + r_2$ for some $x \in \N$ and $0 \leq r_2 < r_1$.
-Let us also assume that $r_2 \neq 0$ and deal with this case later.
-Notice now that applying $p_1$-periodicity $x$ times leads to $S[0: L_1 - xp_1] = S[xp_1: L_1]$.
-Looking at the substring $[r_2:]$ of both sides leads to $S[r_2: L_1-xp_1] = S[r_1: L_1]$ but this is equal to $S[0: L_1 - r_1]$
-by $r_1$-periodicity. Since $L_1 - r_1 = L_1 - xp_1 - r_2$ we now have:
-$$ S[r_2: L_1 - r_1 + r_2] = S[0: L _1- r_1] $$
-which is $r_2$-periodicity of substring $S[0:L_1 - r_1 + r_2]$.
+Let us denote $p_1 := p$, $r_1 := r$, $L_1 := L$ and let $r_2$, $0 \leq r_2 < r_1$ be the reminder
+of dividing $r_1$ by $p_1$. Let us also assume that $r_2 \neq 0$ and deal with this case later.
+By previous lemma, we find that $S[L_1 - r_1 + r_2]$ is $r_2$ periodic.
 Note also that $\textnormal{gcd}(p_1, r_2) = \textnormal{gcd}(p_1, r_1)$ by euclidean algorithm. \
-By division with reminder again, let now $0 \leq p_2 < p_1$ and $y$ be such that $p_1 = y r_2 + p_2$.
-We again assume $p_2 \neq 0$ in which case we can use the same procedure with $r_2$,
-$p_1$ and $L_1 - r_1 + r_2$ in place of $p_1$, $r_1$ and $L_1$
-(note that requirement $L_1 - r_1 + r_2 > p_1 + r_2$ is equivalent to the initial assumption $L > p + r$)
-to find that $S[0:L - r_1 + r_2 - p_1 + p_2]$ is $p_2$-periodic and
-$\textnormal{gcd}(p_2, r_2) = \textnormal{gcd}(p_1, r_2) = \textnormal{gcd}(p_1, r_1)$. \
+Let $p_2$ now be the reminder of dividing $p_1$ with $r_2$ and assume again that $p_2 \neq 0$.
+Previous lemma with $r_2, p_1, L_1 - r_1 + r_2$ in place of $p, r, L$
+now tells us that $S[L_1, r_1 - p_1 + r_2 + p_2]$ is $p_2$-periodic
+(note that the requirement $L_1 - r_1 + r_2 > p_1 + r_2$ is equivalent to the initial assumption $L > p + r$).
+Again, we also have: $\textnormal{gcd}(p_2, r_2) = \textnormal{gcd}(p_1, r_2) = \textnormal{gcd}(p_1, r_1)$. \
 We are now in exactly the same setting as at the beginning of the proof with $p_1$, $r_1$ and $L_1$ replaced by
 $p_2$, $r_2$ and $L_2 := L_1 - p_1 - r_1 + p_2 + r_2$.
-The procedure can be repeated to get sequences $p_1 > p_2 > p_3 > \ldots \geq 0$ and $r_1 > r_2 > r_3 > \ldots \geq 0$
+The procedure can be repeated to get sequences $p_1 > p_2 > p_3 > \ldots \geq 0$, $r_1 > r_2 > r_3 > \ldots \geq 0$
 and $L_1 > L_2 > L_3 > \ldots \geq 0$ until either $p_{k+1}=0$ or $r_{k+1} = 0$ for some $k \in \N$,
 which must happen eventually since these sequences are strictly decreasing. Notice that this covers the
-casese $r_2 = 0$ and $p_2 = 0$ which were skipped in the initial part of the proof.
+casese $r_2 = 0$ and $p_2 = 0$ which were skipped in the initial part of the proof. \
 So far we have proved that $S[0: L_k]$ will be both $p_k$- and $r_k$-periodic,
 $\textnormal{gcd}(p_k, r_k) = \textnormal{gcd}(p, r)$ and
 $$ L_k = L - p - r + p_k + r_k $$
-where the last two facts follow from telescoping or by induction.
+where the last two facts follow from telescoping or by induction. \
 Assume first that $r_{k+1} = 0$. But in that case $p_k$ divides $r_k$ and $\textnormal{gcd}(p_k, r_k) = p_k$ and the
 statement of the theorem is true since we know that $S[0:L_k]$ is $p_k$-periodic, $L_k > L - p - r$ and
-$\textnormal{gcd}(p, r) = p_k$.
-Alternatively, suppose that $p_{k+1} = 0$. We now repeat the argument from the intermediate step of construction of the
-sequence.
-
-in $r_{k+1}$ divides $p_k$
+$\textnormal{gcd}(p, r) = p_k$. \
+Alternatively, suppose that $r_{k+1} > 0$ but $p_{k+1} = 0$. Using the previous lemma one more time, we find that
+$S[0: L_k - r_k + r_{k+1}]$ is $r_{k+1}$-periodic.
+Since $p_{k+1} = 0$, $r_{k+1}$ divides $p_k$ and hence $\textnormal{gcd}(p_k, r_{k+1}) = r_{k+1}$.
+By euclidean algorithm we find that
+$\textnormal{gcd}(p_k, r_{k+1}) = \textnormal{gcd}(p_k, r_k) = \textnormal{gcd}(p, r)$ which proves the statement
+in this case as well since $L_k - r_k + r_{k+1} = L - p - r + p_k + r_{k+1} \geq L - p - r$.
 
 
 ### Prop 5.1:
