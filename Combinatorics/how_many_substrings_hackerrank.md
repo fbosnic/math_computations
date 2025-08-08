@@ -17,7 +17,7 @@ _Note - it is likely that the desired complexity is slightly below $\mathcal{O}(
 Whether an exponent lower than $\frac{3}{2}$ is required remains unclear._
 
 ### Definition 1:
-Let $i, j \in \N$, define $\pi(i, j)$ to be the lenght of the common prefix of $S[i:]$ and $S[j:]$.
+Let $i, j \in \N$, define $\pi(i, j)$ to be the length of the common prefix of $S[i:]$ and $S[j:]$.
 That is, $\pi(i, j) = \min_{x \in [m, M]}LCP[x]$ where $m := \min(lkp[i], lkp[j])$ and $M := \max(lkp[i], lkp[j])$
 
 ### Corollary 1.1:
@@ -88,7 +88,7 @@ $$(qS[0:p] S[0:r])[x] = S[r']$$
 which completes the proof. The second statment is a particular case.
 
 ### Lemma 5.4
-Let $S$ of lenght $L$ be a sequence that is both $p$- and $r$-periodic for arbitrary $p < r$ such that $L > p + r$.
+Let $S$ of length $L$ be a sequence that is both $p$- and $r$-periodic for arbitrary $p < r$ such that $L > p + r$.
 Let $q$ be the reminder of dividing $r$ with $p$ and assume $q \neq 0$.
 Then $S[0:L-r+q]$ is $q$-periodic.
 
