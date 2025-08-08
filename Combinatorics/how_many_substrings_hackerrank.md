@@ -277,53 +277,41 @@ def find_distingiushed_elements:
 
     pos = sa_lookup[l]
     dist_elem = empty_list()
+    r = 0
 
-    v = l
+    lcp_depth = 0
     while True:
-        left = find_last_larger_or_equal(
-            sa_seg_tree,
+        left = find_index(
+            LCP_seg_tree,
             direction="left",
             start=pos,
-            value=v
+            value=lcp_depth
         )
-        right = find_last_larger_or_equal(
-            sa_seg_tree,
+        right = find_index(
+            LCP_seg_tree,
             direction="right",
             start=pos,
-            value=v
+            value=lcp_depth
         )
-        if left > 0:
-            left -= 1
         if right < n-1:
             right += 1
-        depth = LCP_seg_tree.min(left, right)
-        left = find_last_larger_or_equal(
-            LCP_seg_tree,
-            direction="left",
-            start=pos,
-            value=depth
-        )
-        right = find_last_larger_or_equal(
-            LCP_seg_tree,
-            direction="right",
-            start=pos,
-            value=depth
-        )
-        k = sa_seg_tree.min(left, right + 1)
+        k = sa_seg_tree.min(left, right)
         dist_elem.append(k)
-        v = k - 1
-
+        r = r + 1
+        a = min(pos, k)
+        b = max(pos, k)
+        lcp_depth = LCP_seg_tree.min(a, b)
 
     return r, dist_elem
 
-def find_maximal_index_such_that_all_before_are_larger:
+
+def find_index:       # finds maximal index (in specified direction) so that elements before it are all large
     Input:
-        min_seg_tree - "min" segment tree over an arbitrary array
-        direction - either "left" or "righ" determining the direction of search
-        start - element to start the search from (excluded from search)
-        value - an arbitrary bound
-    output:
-        index of maximal element (in the specified direction) such that all before it are larger than *value*
+        min_seg_tree  # "min" segment tree over an arbitrary array
+        direction     # either "left" or "righ" determining the direction of search
+        start         # element to start the search from (excluded from search)
+        value         # an arbitrary bound
+    output:           # index such that all elements after it are >= than *value*
     node = min_seg_tree.get_leaf_by_index(start)
     while node != root and (node.is_child(direction) or node.parent().child(direction).value() >= value):
         node = node.parent()
