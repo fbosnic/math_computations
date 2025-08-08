@@ -70,8 +70,9 @@ If a finite sequence $S$ of length $L$ is $p$-periodic then every prefix of $S$ 
 $$ S[0: l-p] = S[p: l] \quad \forall p < l < L $$
 
 ### Definition 5.2
-Let us denote concatenation of string $S$ with itself $n$-times by $n S$. That is,
-$$nS = \underbrace{SS \ldots S}_{n-\textnormal{times}}$$
+We use $+$ to denote concatenation of two strings $A + B$.\
+Conatenation of string $S$ with itself $n$-times is denoted by multiplication $n S$:
+$$nS = \underbrace{S + S + \ldots + S}_{n-\textnormal{times}}$$
 
 ### Corolary 5.3:
 If a finite sequence $S$ of length $L$ is $p$-periodic and $L = q p + r$ for some $q, r \in \N_0$
