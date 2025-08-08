@@ -191,6 +191,28 @@ which implies $\pi(k_{2\alpha}, i) \geq \pi(k_{2\alpha + 1}, i)$, contradicts th
 and completes the proof.
 
 
+### Theorem 5.8:
+Let $L$ be the lenght of string $S$. For any $0 \leq i < L$ there are strictly fewer than
+$\sqrt{8(L-i)}$ elements which are distinguished for $i$.
+
+#### Proof:
+Let $L$ denote the length of string $S$. Let $\beta \in \N_0$ be the largest even number such
+that $k_\beta$ is distinguished for $i$. Let us also assume $\beta > 2$ and write $\beta = 2\alpha + 1$.
+From definition of $k_{\beta}$ we know that $\pi(k_\beta, i) \geq \alpha$ so that
+$$k_{\beta} + \beta \leq L $$
+Combining this with the previous theorem leads to:
+$$ L - (2\alpha + 2)  - i \geq k_{2\alpha + 2} - i = (k_{2\alpha + 2} - k_{2\alpha}) + (k_{2\alpha} - i)
+\geq \alpha + (k_{2(\alpha - 1)} - i)$$
+By telescoping we find that the right side is
+$$ ... = \ldots \alpha + (\alpha - 1) + (\alpha - 2) + \ldots + (k_{0} - i) = \frac{(\alpha + 1)\alpha}{2} + 1$$
+From here it follows that
+$$ L - i \geq \frac{\alpha^2 + 5 \alpha + 6}{2} > \frac{(2\alpha + 4)^2}{8}$$
+And therefore
+$$ \beta + 1 < 2\alpha + 4 < \sqrt{8(L-i)} $$
+Recall that we assumed $\beta > 1$ for this computation but since $L - i \geq 1$ the inequality is clearly true
+in that case as well.
+Furthermore, there could be at most one more distinguished element $k_{\beta + 1}$ for $i$ so the total number
+of $i$-distinguished elements is bounded by $\sqrt{8(L-i)}$.
 ### Algorithm 1:
 ```
 def Main
