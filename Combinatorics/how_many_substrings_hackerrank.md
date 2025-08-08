@@ -57,8 +57,8 @@ Clearly $i < j < k$. If we suppose that $\pi(i,k) \leq \pi(j,k)$, then $\pi(i,j
 ### Prop 4:
 For any $i < j$ there is at most one $k$ which is distinguished for both $i$ and $j$.
 #### Proof:
-Suppose there are 2 such distinguished elements, $k_1 < k_2$.
-By previous lemma, this would imply $\pi(j, k_1) = \pi(i, j) = \pi(j, k_2)$ which contradicts the definition of $j \to k_2$.
+Suppose there are 2 such distinguished elements, $k^1 < k^2$.
+By previous lemma, this would imply $\pi(j, k^1) = \pi(i, j) = \pi(j, k^2)$ which contradicts the definition of $j \to k^2$.
 
 
 ### Def 5.0:
