@@ -77,15 +77,15 @@ $$nS = \underbrace{S + S + \ldots + S}_{n-\textnormal{times}}$$
 ### Corolary 5.3:
 If a finite sequence $S$ of length $L$ is $p$-periodic and $L = q p + r$ for some $q, r \in \N_0$
 from division with reminder theorem, then
-$$ S = q S[0:p] S[0:r]$$
-In particular, $S[0:np] = nS[0:p]$ for every $n \in \N_0$, $n < L/p$.
+$$ S = qS[0:p] + S[0:r]$$
+In particular, $S[0:np] = nS[0:p]$ for every $n \in \N_0$, $n \leq L/p$.
 
 #### Proof:
 Let $0 \leq x \leq L$ be arbitrary and $x = q' p + r'$ (again by division with reminder).
 By applying $p$-periodicity of $S$ $q'$ times we have
 $$S[x] = S[x - p] = S[x - 2p] = \ldots = S[x - q'p] = S[r']$$
 On the other hand, the $x$-th element of the string on the right hand side is
-$$(qS[0:p] S[0:r])[x] = S[r']$$
+$$(qS[0:p] + S[0:r])[x] = S[r']$$
 which completes the proof. The second statment is a particular case.
 
 ### Lemma 5.4
@@ -168,24 +168,24 @@ Furthermore, let us denot denote $R := S[i: i + d]$.
 As $p$ and $r$ are both smaller than $\alpha + d$ and divisible by $d$,
 one of the previous corollaries shows that
 $$S[k_{2\alpha}: k_{2\alpha + 1}] = S[i: i + p] = \frac{p}{d} R \quad \textnormal{ and }
- \quad S[k_{2\alpha + 1}: k_{\alpha + 2}] = S[i: i + r] = \frac{r}{d} R$$
+ \quad S[k_{2\alpha + 1}: k_{2\alpha + 2}] = S[i: i + r] = \frac{r}{d} R$$
 Now, by previous lemma, we also know that $S[k_2: k_2 + \pi(k_2, i)]$ is $r$-periodic
 and hence that
 $$S[k_{2\alpha + 1}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] =
-q''S[k_{2\alpha +1}: k_{2\alpha + 1} + r] + S[k_{2\alpha +1}:k_{2\alpha + 1} + r'']$$
+a'S[k_{2\alpha +1}: k_{2\alpha + 1} + r] + S[k_{2\alpha +1}:k_{2\alpha + 1} + b']$$
 for $a'$ and $b'$ such that $\pi(k_{\alpha +1}, i) = a' r + b'$. \
-But then by definition of $k_2$ as distinct element for $i$ we have
-$$S[k_{2\alpha + 1}: k_2 + \pi(k_{2\alpha + 1}, i)] = q'S[i: i + r] + S[i:i + r'] = q'$$
-Moreover
+But then by definition of $k_{2\alpha + 1}$ as distinct element for $i$ we have
+$$S[k_{2\alpha + 1}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] = a'S[i: i + r] + S[i:i + b']$$
+Moreover, combining previous findings we compute that
 $$S[k_{2\alpha}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] = S[k_{2\alpha}: k_{2\alpha + 1}]
 + S[k_{2\alpha + 1}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] =
-\frac{p}{d} R + q'S[i: i + r] + S[i:i + r']
+\frac{p}{d} R + a'S[i: i + r] + S[i:i + b']
 $$
-and, together with another decomposition $r' = q'' d + r$, we find
-$$ \ldots = \frac{p}{d} R + \frac{q'r}{d} R + q'' R  + S[i:i + r] $$
-We are only interested in the fact that there are $q, r \in \N_0$ such that
-$$S[k_{2\alpha}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] = q R + R[0: r].$$
-From this equation we can read of that
+and, together with another decomposition $b' = a'' d + b''$, we find
+$$ \ldots = \frac{p}{d} R + \frac{a'r}{d} R + a'' R  + R[0:b''].$$
+We are only interested in the fact that there are $a, b \in \N_0$ such that
+$$S[k_{2\alpha}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] = a R + R[0: b].$$
+Since $d$ (the length of $R$) divides $k_{2\alpha + 1} - k_{2\alpha}$, from this equation we can read of that
 $$S[k_{2\alpha}: k_{2\alpha} + \pi(k_{2\alpha + 1}, i)] = S[k_{2\alpha + 1}: k_{2\alpha + 1} + \pi(k_{2\alpha + 1}, i)] $$
 which implies $\pi(k_{2\alpha}, i) \geq \pi(k_{2\alpha + 1}, i)$, contradicts the definition of $k_{2\alpha + 1}$
 and completes the proof.
