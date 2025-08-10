@@ -213,7 +213,13 @@ Recall that we assumed $\beta > 1$ for this computation but since $L - i \geq 1$
 in that case as well.
 Furthermore, there could be at most one more distinguished element $k_{\beta + 1}$ for $i$ so the total number
 of $i$-distinguished elements is bounded by $\sqrt{8(L-i)}$.
-### Algorithm 1:
+## Algorithm 6:
+
+### Definition
+We use the convetion that the LCP-array (largest common prefix array) at index $i \geq 1$ contains the
+common prefix of $(i-1)$-th and $i$-th sorted suffix. The value of the LCP-array at index $0$ is defined
+to be $0$ but holds no information and can only be used if it is convenient for certain formulas.
+
 ```
 def Main
     Input:
@@ -305,13 +311,30 @@ def find_distingiushed_elements:
     return r, dist_elem
 
 
-def find_index:       # finds maximal index (in specified direction) so that elements before it are all large
+def TMP:  # NOT WORKING AS I WANTED IT
+    start_node = min_seg_tree.get_leaf_by_index(start)
+    node = start_node
+    previous_node = NULL
+    while node != root and node.value() >= value:
+        previous_node = node
+        node = node.parent()
+    if node == root:
+        return 0, min_seg_tree.len() - 1
+    else if node == start_node:
+        l = i
+        r = NULL
+    else if previous.is_right_child(node):
+        while node.
+
+
+
+def find_index:       # finds the maximal index so that elements before it are all sufficiently large
     Input:
         min_seg_tree  # "min" segment tree over an arbitrary array
         direction     # either "left" or "righ" determining the direction of search
         start         # element to start the search from (excluded from search)
         value         # an arbitrary bound
-    output:           # index such that all elements after it are >= than *value*
+    output:           # index such that all elements before it are >= than *value*
     node = min_seg_tree.get_leaf_by_index(start)
     while node != root and (node.is_child(direction) or node.parent().child(direction).value() >= value):
         node = node.parent()
@@ -330,35 +353,39 @@ def find_index:       # finds maximal index (in specified direction) so that ele
     return = node.index() - 1
 ```
 
-### Theorem 1. Previous algorithm works as intented
+### Theorem 7.
+Let $\mathcal{S}$ be an array of length $n$ on which there is a min-segment tree strucutre.
+Let also $i$ be an arbitrary index on $\mathcal{S}$ and $\alpha \in \R$ an arbitrary value.
+For input ($\mathcal{S}$, "right", $i$, $\alpha$) the funciton `find_index` works as intended - it
+returns the largest $i \leq j < n$ such that $\mathcal{S}[x] \geq \alpha$ for every $i < x \leq j$. \
+Moreover computing `find_index` takes less than ? operators.
 
 #### Proof:
-Let us verify that all functions produce the expected outputs starting from the
-`find_maximal_index_such_that_all_before_are_larger`. The input here is a "min" segment tree over an arbitrary
-($0$-indexed) array $\mathcal{S}$, together with a starting index $i$, a direction which is either
-"left" or "right" and a value $\alpha$. Start by assuming that direction equals "right"
-and let $j$ be the desired index, that is
-$$ \mathcal{S}_{j+1} < \alpha \qquad \text{and} \qquad \mathcal{S}_x \geq \alpha \quad \forall x \in (i, j]$$
-Let $\mathcal{S}(N) := \min_{x \preccurlyeq N} \mathcal{S}_x$ to be the "min operation" on
-the segment tree for an arbitrary node $N$ where $x \preccurlyeq N$ indicates that
-$x$ is an index such that the leaf at that index is a descendant of $N$.
+Since for $j = i$ we trivially have
+$$\mathcal{S}_x \geq \alpha \quad \forall i < x \leq j,$$
+a maximal $j$ satisfying the same property must exist and is clearly unique. From now on, $j$ will denote that maximal element. \
+For an arbitrary node $N$ in the segment tree define $\mathcal{S}(N) := \min_{x \preccurlyeq N} \mathcal{S}_x$ to
+be the "min operation" on the segment tree where $x \preccurlyeq N$ indicates that
+leaf at that index $x$ is a descendant of $N$.
 Define also
-$$f(x) = \begin{cases}\min_{(i, x]}\mathcal{S}_x \quad \text{ if } x > i \\ \mathcal{S}_{i+1} \quad \text{ otherwise.} \end{cases}$$
+$$f(x) = \begin{cases}\min_{(i, x]}\mathcal{S}_x \quad \text{ if } x > i \\ \alpha \quad \text{ otherwise.} \end{cases}$$
 It is easy to extended it
 to nodes in the segment tree $\mathcal{S}$ by defining
 $f(N) = \min_{x \preccurlyeq N} f(x)$ for any node $N$ in
-$\mathcal{S}$.
-
-In case $j$ is the last index in the segment tree then $f(N) \geq \alpha$ for all nodes $N$.
+$\mathcal{S}$. \
+It is clear that the first while loop traverses the tree on the direct path from $i$ to the root.
+Suppose $j$ is the last index in the array and that the first loop terminates at
+some ancestor $L$ of $i$. Should $L$ not be the "root" of the tree, we would have
+$\mathcal{S}(R) < \alpha$ for right child $R$ of parent $P$ of $L$. But since $i$ is in $L$, $R$
+can contain only indeces $i < x \leq j$ which implies $\mathcal{S}(R) \geq \alpha$ and leads to
+contradiction. Hence $
 Thus the first wile loop must finish with `node = root` and the algorithm
-will return the length of the segment tree minus 1 which is the last index i.e. $j$ by assumption.
-
+will return the length of the segment tree minus 1 which is the last index i.e. $j$ by assumption. \
 Otherwise, $j+1$ is a valid index of the segment tree so let $N$ be the lowest common
 ancestor of $i$ and $j+1$ in $\mathcal{S}$. Then the left child
 of $N$ must be an ancestor of $i$, call it $L$, and the right child, call it $R$,
 must be an ancestor of $j + 1$. It follows that
-$f(L) \geq \min_{x \in (i, j]} \geq \alpha$ and $f(R) \vee \mathcal{S}(R) \leq S_{j+1} < \alpha.$
-Clearly the first while loop traverses the tree on the direct path from $i$ to the root.
+$f(L) \geq \min_{x \in (i, j]} \geq \alpha$ and $f(R) \leq \mathcal{S}_{j+1} < \alpha.$
 Note that the terminating condition $\mathcal{S}(R) < \alpha$ is satisfied for $L$.
 Also, if the loop would terminate before $L$, then there would exist
 some $L_1$, it's parent $P_1$ (a descendant of $L$ or $L$ itself) and the
