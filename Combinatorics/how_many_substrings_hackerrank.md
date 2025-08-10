@@ -1,12 +1,38 @@
 # Complexity of [How many substrings](https://www.hackerrank.com/challenges/how-many-substrings/problem)
 
-
 ### Setup
 Let:
 * $\mathcal{A}$ be a countable alphabet
 * $N \in \N$, $S = c_1 \ldots c_N \in \mathcal{A}$ a string of characters
 * $SA \equiv SA(S)$ the suffix array of $S$ and $LCP \equiv LCP(S)$ the corresponding longest common prefix array
 * $lkp \equiv lkp(S)$ the lookup table from $S$ to $SA$ defined by $lkp[SA[k]] = k$
+
+
+### Definition 0.1
+A suffix array $SA$ of $S$ is the array of alphabetically sorted suffixes of $S$.
+More precisely, the elements of the $SA$ are integers from $0$ to $len(S) - 1$
+such that value $SA[i] = x$ corresponds to suffix $S[x:]$.
+To be specific, let us assume that suffixes are sorted in the ascending order.
+
+### Definition 0.2
+A largest common prefix array (LCP-array) of string $S$ together with a suffix array $SA$
+is an interger array of same length such that LCP-array at index $i \geq 1$ contains the lengths of the
+common prefix of $(i-1)$-th and $i$-th sorted suffix. The value of the LCP-array at index $0$ is defined
+to be $0$ but holds no information and can only be used if it is convenient for certain formulas.
+
+### Definition 0.3
+Let $I$ be an integer array of lenght $n$. A min-segment tree is a complete binary tree of length
+$\lceil \log n \rceil$ such that a leaf node is assigned to each index of $i$.
+We will often identify indices $i$ with corresponding nodes of the segment tree
+For nodes $N$ and $P$ we denote the statemnt that
+$N$ is a descendant of $P$ by $N \preccurlyeq P$.
+Moreover the min segment tree assigns a value $v(N)$ to each of its nodes $N$ so that:
+- For every node $N$ we have $v(N) = \min_{i \preccurlyeq N} I(i)$
+- Let $P$ be a node with left child $L$ and right child $R$ and suppose $i \preccurlyeq L$, $j \preccurlyeq R$ then $i \leq j$
+
+### Definition 0.4:
+A Fenwick tree of $n$ elements is an array of $n$ elements such that ...
+
 
 ### Problem ([hackerrank.com - How many substrings](https://www.hackerrank.com/challenges/how-many-substrings/problem))
 Given a string of characters $S$ of length $N$ and a list of $N$ queries consisting of a start index $s_k$ and an end index $e_k$, $0 \leq s_k < e_k \leq N$
