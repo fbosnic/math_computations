@@ -239,13 +239,9 @@ Recall that we assumed $\beta > 1$ for this computation but since $L - i \geq 1$
 in that case as well.
 Furthermore, there could be at most one more distinguished element $k_{\beta + 1}$ for $i$ so the total number
 of $i$-distinguished elements is bounded by $\sqrt{8(L-i)}$.
-## Algorithm 6:
+## Algorithmic solution
 
-### Definition
-We use the convetion that the LCP-array (largest common prefix array) at index $i \geq 1$ contains the
-common prefix of $(i-1)$-th and $i$-th sorted suffix. The value of the LCP-array at index $0$ is defined
-to be $0$ but holds no information and can only be used if it is convenient for certain formulas.
-
+### Algorithm
 ```
 def Main
     Input:
@@ -357,7 +353,8 @@ def find_left_limit:  # finds the left-most index j such that
         min_seg_tree  # "min"-segment tree over an arbitrary array
         start         # element to start the search from
         alpha         # an arbitrary bound
-    output:           # the desired index j
+    Output:           # the desired index j
+
     node = min_seg_tree.get_leaf_by_index(start)
     while node != root and (node.value() >= alpha):
         node = node.parent()
@@ -378,7 +375,8 @@ def find_right_limit: # finds the right-most index j such that
         min_seg_tree  # "min"-segment tree over an arbitrary array
         start         # element to start the search from
         alpha         # an arbitrary bound
-    output:           # the desiderd index j
+    Output:           # the desiderd index j
+
     node = min_seg_tree.get_leaf_by_index(start)
     while node != root and (node.value() >= alpha):
     while node != root and (node.is_right_child() or node.parent().right_child().value() >= value):
