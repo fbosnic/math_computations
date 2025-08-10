@@ -359,7 +359,7 @@ def find_left_limit:  # finds the left-most index j such that
         if node.right_child().value() < value:
             node = node.right_child()
         else:
-            node = node.left_child(direction)
+            node = node.left_child()
     return = node.index() + 1
 
 
