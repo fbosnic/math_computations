@@ -287,15 +287,13 @@ def find_distingiushed_elements:
 
     lcp_depth = 0
     while True:
-        left = find_index(
+        left = find_left_limi(
             LCP_seg_tree,
-            direction="left",
             start=pos,
             value=lcp_depth
         )
-        right = find_index(
+        right = find_right_index(
             LCP_seg_tree,
-            direction="right",
             start=pos,
             value=lcp_depth
         )
@@ -327,29 +325,47 @@ def TMP:  # NOT WORKING AS I WANTED IT
         while node.
 
 
-
-def find_index:       # finds the maximal index so that elements before it are all sufficiently large
+def find_left_limit:  # finds the left-most index j such that
+                      # min_seg_tree[x] \geq alpha for all j <= x <= start
     Input:
-        min_seg_tree  # "min" segment tree over an arbitrary array
-        direction     # either "left" or "righ" determining the direction of search
-        start         # element to start the search from (excluded from search)
-        value         # an arbitrary bound
-    output:           # index such that all elements before it are >= than *value*
+        min_seg_tree  # "min"-segment tree over an arbitrary array
+        start         # element to start the search from
+        alpha         # an arbitrary bound
+    output:           # the desired index j
     node = min_seg_tree.get_leaf_by_index(start)
-    while node != root and (node.is_child(direction) or node.parent().child(direction).value() >= value):
+    while node != root and (node.value() >= alpha):
         node = node.parent()
     if node == root:
-        if direction == "left":
-            return 0
-        else:
-            return segment_tree.len() - 1
+        return 0
 
-    node = node.parent.child(direction)
     while not node.is_leaf():
-        if node.child(direction.reverse()).value() < value:
-            node = node.child(direction.reverse())
+        if node.right_child().value() < value:
+            node = node.right_child()
         else:
-            node = node.child(direction)
+            node = node.left_child(direction)
+    return = node.index() + 1
+
+
+def find_right_limit: # finds the right-most index j such that
+                      # min_seg_tree[x] \geq alpha for all start < x <= j
+    Input:
+        min_seg_tree  # "min"-segment tree over an arbitrary array
+        start         # element to start the search from
+        alpha         # an arbitrary bound
+    output:           # the desiderd index j
+    node = min_seg_tree.get_leaf_by_index(start)
+    while node != root and (node.value() >= alpha):
+    while node != root and (node.is_right_child() or node.parent().right_child().value() >= value):
+        node = node.parent()
+    if node == root:
+        return segment_tree.len() - 1
+
+    node = node.parent.right_child()
+    while not node.is_leaf():
+        if node.left_child.value() < value:
+            node = node.left_child()
+        else:
+            node = node.right_child()
     return = node.index() - 1
 ```
 
