@@ -23,12 +23,15 @@ to be $0$ but holds no information and can only be used if it is convenient for 
 ### Definition 0.3
 Let $I$ be an integer array of lenght $n$. A min-segment tree is a complete binary tree of length
 $\lceil \log n \rceil$ such that a leaf node is assigned to each index of $i$.
-We will often identify indices $i$ with corresponding nodes of the segment tree
-For nodes $N$ and $P$ we denote the statemnt that
-$N$ is a descendant of $P$ by $N \preccurlyeq P$.
+We will often identify indices $i$ with corresponding nodes of the segment tree.
+For nodes $N$ and $M$ we denote the statemnt that $N$ is a descendant of $M$ by $N \preccurlyeq M$.\
+Additionally we denote by $N \lll M$ the statement that "$P$ is right of $N$", formally defined as: there being some $P, L, R$
+such that $L$ is a left child of $P$, $R$ is the right child of $P$, $N \preccurlyeq L$, $M \preccurlyeq R$.\
 Moreover the min segment tree assigns a value $v(N)$ to each of its nodes $N$ so that:
 - For every node $N$ we have $v(N) = \min_{i \preccurlyeq N} I(i)$
 - Let $P$ be a node with left child $L$ and right child $R$ and suppose $i \preccurlyeq L$, $j \preccurlyeq R$ then $i \leq j$
+- If for a leaf node $L$ we have $L \lll n-1$ then there exists some index $i$ such that $L$ is the node of that index ( the
+    segment tree is allowed to have additional leaf nodes)
 
 ### Definition 0.4:
 A Fenwick tree of $n$ elements is an array of $n$ elements such that ...
@@ -331,22 +334,6 @@ def find_distingiushed_elements:
     return r, dist_elem
 
 
-def TMP:  # NOT WORKING AS I WANTED IT
-    start_node = min_seg_tree.get_leaf_by_index(start)
-    node = start_node
-    previous_node = NULL
-    while node != root and node.value() >= value:
-        previous_node = node
-        node = node.parent()
-    if node == root:
-        return 0, min_seg_tree.len() - 1
-    else if node == start_node:
-        l = i
-        r = NULL
-    else if previous.is_right_child(node):
-        while node.
-
-
 def find_left_limit:  # finds the left-most index j such that
                       # min_seg_tree[x] \geq alpha for all j <= x <= start
     Input:
@@ -354,12 +341,19 @@ def find_left_limit:  # finds the left-most index j such that
         start         # element to start the search from
         alpha         # an arbitrary bound
     Output:           # the desired index j
-
+    if start == 0:
+        return 0
     node = min_seg_tree.get_leaf_by_index(start)
-    while node != root and (node.value() >= alpha):
+    while node != root and (node.is_left_child() or node.parent.left_child().value() >= alpha):
         node = node.parent()
     if node == root:
         return 0
+    if node == start:
+        if start.value() >= \alpha
+            return start - 1
+        else
+            return start
+    node = node.parent().left_child()
 
     while not node.is_leaf():
         if node.right_child().value() < value:
@@ -393,82 +387,54 @@ def find_right_limit: # finds the right-most index j such that
     return = node.index() - 1
 ```
 
-### Theorem 7.
-Let $\mathcal{S}$ be an array of length $n$ on which there is a min-segment tree strucutre.
-Let also $i$ be an arbitrary index on $\mathcal{S}$ and $\alpha \in \R$ an arbitrary value.
-For input ($\mathcal{S}$, "right", $i$, $\alpha$) the funciton `find_index` works as intended - it
-returns the largest $i \leq j < n$ such that $\mathcal{S}[x] \geq \alpha$ for every $i < x \leq j$. \
-Moreover computing `find_index` takes less than ? operators.
+### Theorem 7.1
+Let $\mathcal{A}$ be an LCP-array of length $n$ with is a min-segment tree structure on $\mathcal{A}[1:]$.
+(Because the value of $LCP-array at index 0 is undefined).
+Let also $i$ be an arbitrary index on $\mathcal{A}$ and $\alpha \in \R$ an arbitrary value.
+For input ($\mathcal{A}$, $i$, $\alpha$) the funciton `find_left_limit` works as intended - it
+returns the smallest $0 \leq j \leq i$ such that $\mathcal{A}[x] \geq \alpha$ for every $j < x \leq i$. \
+Moreover computing `find_index` has complexity $\mathcal{O} (\log n)$
 
 #### Proof:
-Since for $j = i$ we trivially have
-$$\mathcal{S}_x \geq \alpha \quad \forall i < x \leq j,$$
-a maximal $j$ satisfying the same property must exist and is clearly unique. From now on, $j$ will denote that maximal element. \
-For an arbitrary node $N$ in the segment tree define $\mathcal{S}(N) := \min_{x \preccurlyeq N} \mathcal{S}_x$ to
-be the "min operation" on the segment tree where $x \preccurlyeq N$ indicates that
-leaf at that index $x$ is a descendant of $N$.
-Define also
-$$f(x) = \begin{cases}\min_{(i, x]}\mathcal{S}_x \quad \text{ if } x > i \\ \alpha \quad \text{ otherwise.} \end{cases}$$
-It is easy to extended it
-to nodes in the segment tree $\mathcal{S}$ by defining
-$f(N) = \min_{x \preccurlyeq N} f(x)$ for any node $N$ in
-$\mathcal{S}$. \
-It is clear that the first while loop traverses the tree on the direct path from $i$ to the root.
-Suppose $j$ is the last index in the array and that the first loop terminates at
-some ancestor $L$ of $i$. Should $L$ not be the "root" of the tree, we would have
-$\mathcal{S}(R) < \alpha$ for right child $R$ of parent $P$ of $L$. But since $i$ is in $L$, $R$
-can contain only indeces $i < x \leq j$ which implies $\mathcal{S}(R) \geq \alpha$ and leads to
-contradiction. Hence $
-Thus the first wile loop must finish with `node = root` and the algorithm
-will return the length of the segment tree minus 1 which is the last index i.e. $j$ by assumption. \
-Otherwise, $j+1$ is a valid index of the segment tree so let $N$ be the lowest common
-ancestor of $i$ and $j+1$ in $\mathcal{S}$. Then the left child
-of $N$ must be an ancestor of $i$, call it $L$, and the right child, call it $R$,
-must be an ancestor of $j + 1$. It follows that
-$f(L) \geq \min_{x \in (i, j]} \geq \alpha$ and $f(R) \leq \mathcal{S}_{j+1} < \alpha.$
-Note that the terminating condition $\mathcal{S}(R) < \alpha$ is satisfied for $L$.
-Also, if the loop would terminate before $L$, then there would exist
-some $L_1$, it's parent $P_1$ (a descendant of $L$ or $L$ itself) and the
-right child $R_1$ of $P_1$ satisfying (according to the termination condition)
-$L_1 \neq R_1$ and $\mathcal{S}(R_1) < \alpha$.
-But this is impossible because
-$i \in L_1$ implies that $i < \min_{x \preccurlyeq R_1} x$ and thus
-$f(R_1) \leq \mathcal{S}(R_1)$ from where we find
-$\alpha \leq f(L) \leq f(P) \leq f(R_1) \leq \mathcal{S}(R_1)$ whih contradits the assumption.
-Hence the first loop terminates exactly at $L$ and, taking into account the intermediate lines,
-`node` points to $R$ just before the second loop starts.
+First of all, if $i = 0$ then the function returns $j=0$ which trivially satisfies the requrements.
+So we assume $i > 0$ from now on.
+Next, not that such $j$ must exist because the consition is trivially satisfied for $j = i$. Therefore
+a maximal such $j$ must exist and is clearly unique. From now on, $j$ will denote that maximal element. \
+Note that the first while loop travels the ancestors from $i$ to the root.\
+If $j = 0$ (note that the value of LCP at 0 is undefined) then $\mathcal{A}[x] \geq \alpha$ for all $0 < x \leq i$.
+But this means that for every $P, L, R$ such that $i \preccurlyeq R$ we have $\mathcal{A}[L] \geq \alpha$ so the
+loop will only terminate at root. An the algorithm will return 0 which is exactly $j$. \
+In case, $j > 0$, we need to have $\mathcal{A}[j] < \alpha $ since otherwise $j-1$ would be
+a smaller element satisfying the same requirements as $j$. Let $P$ the first common ancestor of both $i$ and $j$.
+If $L$ and $R$ are left and right children of $P$ then we must have $j \preccurlyeq L$ and $i \preccurlyeq R$.
+But then $\mathcal{A}[P] \leq \mathcal{A}[j] < \alpha$ so the loop terminates at $R$ (or before $R$).
+If the loop would terminate before $R$ there would be $P_2 \preccurlyeq R$, $L_2$, $R_2$ such that
+$\mathcal{A}[L_2] < \alpha$, $i \preccurlyeq R_2$. But then $j \lll L_2$ and, from definition of $j$, we know that
+for all $x \in L_2$ we have $j < x \leq i$ and consequently $\mathcal{A}[x] \geq \alpha$.
+This leads to $\mathcal{A}[L_2] \geq \alpha$ and a contradiction.
+Therefore, the first loop terminates exactly at $R$. \
+The algorithm then switches from $R$ to $L$ and the second loop travels from $L$ towards leaves.
+Clearly it will end up in some leaf node $N \lll R$ and consequently $N \lll i$. But this means that $N$ is a proper
+node, i.e. corresponding to some $k \leq i$.
+Let $N_1 = L, N_2 \ldots N=k$ be the sequence of nodes produced in the second loop. This must be an ancestor line from
+$R$ to $k$.
+Suppose that $k \neq j$ and let $P'$ be the common ancestor of $j$ and $k$. Since $P'$ is an ancestor of $k$ it must have
+been visited during traversal of the second loop hence $P' = N_\phi$, for some $\phi$.
+There are two cases. If $j \leq k$ then $j \preccurlyeq L'$, $k \preccurlyeq R'$,  $j \lll R \lll i$ so
+$\mathcal{A}[R] \geq \alpha$. But then the loop would decide $N_{\phi + 1} = L$ wich is a contradiction since
+$L$ is not a ancestor of $k$.\
+On the other hand, if $k \lll j$ then $k \preccurlyeq L'$, $j \preccurlyeq R'$. But then
+$\mathcal{A}[R] \leq \mathcal{A}[j] < \alpha$ so the loop would choose $N_{\phi + 1} = R$ which is again a contradiction
+with the fact that we assumed $N_{\phi + 1}$ is an ancestor of k.
 
-As for the second loop, it must terminate as the depth of the `node` increases
-at each step and the tree is of finite depth. Let us prove by induction
-that $f(`node`) < \alpha$ in every step of the loop.
-The statement is true inially as $f(R) < \alpha$.
-Suppose that it is true at some step when `node` points to some node $N_2$.
-Let $L_2$ and $R_2$ be the left and the right children of $N_2$.
-Notice that $i \in L$ implies $i < \min_{x \preccurlyeq R} x$ and the
-same is true for all the descendants of $R$, in particular for
-$N_2, L_2$ and $R_2$. But this is enugh to conclude that
-$f(X) \leq \mathcal{S}(X)$ for $X = N_2, L_2$ or $R_2$.
-There are two cases to
-consider. Firstly, if $\mathcal{S}(L_2) < \alpha$ then `node` is set to $L_2$ and the
-statemnt holds since $f(L_2) \leq \mathcal{S}(L_2)$.  Otherwise, `node` is set to $R_2$
-but the statement remains true as $f(R_2)$ = $f(N_2) < \alpha$ by definitition of $f$ and
-inductive assumption. Thus, after the loop is finished, `node` points to
-some $k$ such that $f(k) < \alpha$. We now show that $f(k - 1) \geq \alpha$.
-Indeed, let $P_3$ be the lowest common ancestor of $k-1$ and $k$ and
-let $L_3$ and $R_3$ be its left and right child respectively. There must
-have been a step of the loop where `node` was pointing to $P_3$. Since
-$R_3$ was selected for the next step it must mean that $f(L_3) \geq \alpha$
-which implies that $f(k-1) \geq \alpha$.
+As for the compexity estimate. It is clear that both loops repeat at most $\lceil \log n \rceil$ (which is depth
+of the segment tree). Assuming that `is_right_child` takes 2 operations in each step of the first loop we perform
+at most $1 + 2 + 4 + 1 = 8$ operations, and in the second loop we perform $1 + 3 + 4 = 8$ operations. Hence we perform
+under $16 \lceil \log n \rceil + 4$ opertions (some operations are not loop related). In any case, the complexity is $\mathcal{O}(\log n)$
 
-Now we have that
-$f(j) \geq \alpha$, $f(j + 1) < \alpha$, $f(k-1) \geq \alpha$, $f(k) < \alpha$
-which implies that $j = k-1$ since $f$ is non-increasing.
-Thus we have proved that the function behaves as expected in case the direction
-is equal to right.
 
-The case of direction equal to "left" is analoguous (though one still needs to
-make sure! TODO)
-
+### Theorem 8
+TODO
 
 Next, we move to `find_distinguished_elements` function.
 Note that this function is called within the main function only with the variable `sa_seg_tree` as the segment tree. Call this segment tree $\mathcal{S}_a$ and call the segment tree `LCP_seg_tree` by $\mathcal{S}_l$.
