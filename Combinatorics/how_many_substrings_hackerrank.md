@@ -393,7 +393,7 @@ Let $\mathcal{A}$ be an LCP-array of length $n$ with is a min-segment tree struc
 Let also $i$ be an arbitrary index on $\mathcal{A}$ and $\alpha \in \R$ an arbitrary value.
 For input ($\mathcal{A}$, $i$, $\alpha$) the funciton `find_left_limit` works as intended - it
 returns the smallest $0 \leq j \leq i$ such that $\mathcal{A}[x] \geq \alpha$ for every $j < x \leq i$. \
-Moreover computing `find_index` has complexity $\mathcal{O} (\log n)$
+Moreover computing `find_left_limit` has complexity $\mathcal{O} (\log n)$
 
 #### Proof:
 First of all, if $i = 0$ then the function returns $j=0$ which trivially satisfies the requrements.
@@ -430,7 +430,20 @@ with the fact that we assumed $N_{\phi + 1}$ is an ancestor of k.
 As for the compexity estimate. It is clear that both loops repeat at most $\lceil \log n \rceil$ (which is depth
 of the segment tree). Assuming that `is_right_child` takes 2 operations in each step of the first loop we perform
 at most $1 + 2 + 4 + 1 = 8$ operations, and in the second loop we perform $1 + 3 + 4 = 8$ operations. Hence we perform
-under $16 \lceil \log n \rceil + 4$ opertions (some operations are not loop related). In any case, the complexity is $\mathcal{O}(\log n)$
+under $16 \lceil \log n \rceil + 4$ opertions (some operations are not loop related).
+In any case, the complexity is $\mathcal{O}(\log n)$
+
+### Theorem 7.2
+Let $\mathcal{A}$ be an LCP-array of length $n$ with is a min-segment tree structure on $\mathcal{A}[1:]$.
+(Because the value of $LCP-array at index 0 is undefined).
+Let also $i$ be an arbitrary index on $\mathcal{A}$ and $\alpha \in \R$ an arbitrary value.
+For input ($\mathcal{A}$, $i$, $\alpha$) the funciton `find_right_limit` works as intended - it
+returns the largest $i \leq j < n$ such that $\mathcal{A}[x] \geq \alpha$ for every $i < x \leq j$. \
+Moreover computing `find_right_limit` has complexity $\mathcal{O} (\log n)$
+
+#### Proof:
+Should be very similar to the previous proof except for some minor technical details.
+...
 
 
 ### Theorem 8
