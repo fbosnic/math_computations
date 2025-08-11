@@ -273,7 +273,7 @@ def Main
     for l = n - 1 down to l = 0:
         pos = lkp[l]
 
-        k_1 < k_2 < ... < k_r = find_distinguished_elements(
+        k_0 < k_1 < ... < k_r = find_distinguished_elements(
             starting_position=pos,
             lcp_segment_tree=LCP_seg_tree,
             sa_seg_tree=sa_seg_tree,
@@ -281,7 +281,7 @@ def Main
         )
         fwt.update_range(start=l, end=n, value=1)
         _progressive_lcp = 0
-        for i=1 up to r-1:“
+        for i=0 up to r-1:
             fwt.update_range(
                 start=k_i + _progressive_lcp,
                 end=k_i + LCP_seg_tree.min(pos, lkp[k_i]),
@@ -306,24 +306,28 @@ def find_distingiushed_elements:    # Returns distinguished elements for a speci
         sa_seg_tree                 # min segment tree on the partial suffix array
         sa_lookup                   # inverse lookup for suffix array
     Output:
-        Inreasing list k_0 < k1 < ... < k_r     # distinguished suffix indices for i (i < k_1)
-
+        Inreasing list k_0 < k1 < ... < k_r     # distinguished suffix indices for i (i < k_0).
+                                                # Empty if i = len(sa_seg_tree)
+    if i  = len(sa_seg_tree):
+        return []
     pos = sa_lookup[i]
     dist_elem = empty_list()
     r = 0
 
     lcp_depth = 0
     while True:
-        left = find_left_limi(
+        left = find_left_limit(
             LCP_seg_tree,
             start=pos,
             value=lcp_depth
         )
-        right = find_right_index(
+        right = find_right_limit(
             LCP_seg_tree,
             start=pos,
             value=lcp_depth
         )
+        if left == right:
+            break
         k = sa_seg_tree.min_element(left, right)
         dist_elem.append(k)
         a = min(pos, k)
@@ -499,9 +503,23 @@ In any case, the complexity is $\mathcal{O}(\log n)$
 
 
 ### Theorem 8
-Let
+Let $\mathcal{L}$ and $A_{sf}$ be the LCP array and the suffix array of string $S$ and let $f$ be the suffix
+lookup from $S$ to $A_{sf}$.
+We allow $A_{sf}$ to be half filled, as long as the value for missing entries is larger than
+$\textnormal{len}(A_{sf})$.
+Let also $i$ be an arbitrary index in $S$. Then function `find find_distinguished_elements` works as intended, that is
+it returns the list containing all distinguished elements $k_{0}(i), k_1(i), k_2(i), \ldots$, in this order.
+Furthermore, it has time complexity of $\mathcal{O}(\sqrt{n} \log n)$
 
-Next, we move to `find_distinguished_elements` function.
+#### Proof:
+Clearly we start with $p := \textnormal{pos} = f(i)$, an empty list of distinguished elements and
+$d := \text{lcp\_depth} = 0$. At each step $n = 0, 1, \ldots$ the while loop will add one element $k_0$ to the output list and
+update the value of $d$ to $d_{n+1}$ (with $d_0 = d$ by convention). We will prove by induction that $k_n$ is the $n-th$
+distinguished element for $i$ and that $d_{n} = \pi(i, k_{n})$ until the loop terminates.
+Clearly $k_0(i) = i + 1$ (unless $i = \textnormal{len}(A_{sf})$
+
+
+
 Note that this function is called within the main function only with the variable `sa_seg_tree` as the segment tree. Call this segment tree $\mathcal{S}_a$ and call the segment tree `LCP_seg_tree` by $\mathcal{S}_l$.
 $\mathcal{S}_a$ is initialized with a value of $n$ and element at `pos = lkp[l]` is set to $l$ once the function is called with parameter $l$.
 As `lkp` is a bijection, whenever this function is called, $\mathcal{S}_a$ contains values $l, l+1, \ldots n-1$ exactly once and then several times the value $n$.
