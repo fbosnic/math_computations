@@ -335,24 +335,21 @@ def find_distingiushed_elements:
 
 
 def find_left_limit:  # finds the left-most index j such that
-                      # min_seg_tree[x] \geq alpha for all j <= x <= start
+                      # min_seg_tree[x] \geq alpha for all j < x <= start
     Input:
-        min_seg_tree  # "min"-segment tree over an arbitrary array
+        min_seg_tree  # "min"-segment tree over an lcp array with first element excluded
         start         # element to start the search from
         alpha         # an arbitrary bound
     Output:           # the desired index j
     if start == 0:
         return 0
+    if start < alpha:
+        return start
     node = min_seg_tree.get_leaf_by_index(start)
     while node != root and (node.is_left_child() or node.parent.left_child().value() >= alpha):
         node = node.parent()
     if node == root:
         return 0
-    if node == start:
-        if start.value() >= \alpha
-            return start - 1
-        else
-            return start
     node = node.parent().left_child()
 
     while not node.is_leaf():
@@ -396,22 +393,30 @@ returns the smallest $0 \leq j \leq i$ such that $\mathcal{A}[x] \geq \alpha$ fo
 Moreover computing `find_left_limit` has complexity $\mathcal{O} (\log n)$
 
 #### Proof:
-First of all, if $i = 0$ then the function returns $j=0$ which trivially satisfies the requrements.
-So we assume $i > 0$ from now on.
-Next, not that such $j$ must exist because the consition is trivially satisfied for $j = i$. Therefore
-a maximal such $j$ must exist and is clearly unique. From now on, $j$ will denote that maximal element. \
-Note that the first while loop travels the ancestors from $i$ to the root.\
+Note that $j$ is well defined becasue the set
+$$ \mathcal{M} := \{l \leq i: \mathcal{A}[x] \geq \alpha \quad \forall l < x \leq i\} $$
+contains $l=i$ (the condition is trivially true) so it must have a unique mimimum.\
+First of all, we handle the trivial cases.
+If $i = 0$ then the function returns $j=0$ which trivially satisfies the requrements.
+Next, if $\mathcal{A}[i] < \alpha$ then clearly $\mathcal{M} = \{i\}$ and therefore $j=i$ so
+the $i$ is the correct return value.\
+Let us assume $i > 0$ and $\mathcal{A}[i] \geq \alpha$ from now on.
+Observe that the second assumption implies $j \leq i-1$.
+Note that the first while loop travels the ancestors of $i$ from $i$ to the root.\
 If $j = 0$ (note that the value of LCP at 0 is undefined) then $\mathcal{A}[x] \geq \alpha$ for all $0 < x \leq i$.
-But this means that for every $P, L, R$ such that $i \preccurlyeq R$ we have $\mathcal{A}[L] \geq \alpha$ so the
-loop will only terminate at root. An the algorithm will return 0 which is exactly $j$. \
-In case, $j > 0$, we need to have $\mathcal{A}[j] < \alpha $ since otherwise $j-1$ would be
-a smaller element satisfying the same requirements as $j$. Let $P$ the first common ancestor of both $i$ and $j$.
+Since the segment tree is defined on $\mathcal{A}[1:]$ (with first element excluded)
+this means that for every $P, L, R$ such that $i \preccurlyeq R$ we
+have $\mathcal{A}[L] \geq \alpha$. Hence the
+loop will only terminate at root. An the algorithm will return 0 which is $j$ by assumption. \
+In case, $j > 0$, we need to have $\mathcal{A}[j] < \alpha $ since otherwise $j-1 \in \mathcal{M}$
+which is impossible as $j = \min \mathcal{M}$. Let $P$ the first
+common ancestor of both $i$ and $j$. Since $j \leq i - 1$, $P$ must be a proper node, $P \neq i$.
 If $L$ and $R$ are left and right children of $P$ then we must have $j \preccurlyeq L$ and $i \preccurlyeq R$.
-But then $\mathcal{A}[P] \leq \mathcal{A}[j] < \alpha$ so the loop terminates at $R$ (or before $R$).
-If the loop would terminate before $R$ there would be $P_2 \preccurlyeq R$, $L_2$, $R_2$ such that
-$\mathcal{A}[L_2] < \alpha$, $i \preccurlyeq R_2$. But then $j \lll L_2$ and, from definition of $j$, we know that
-for all $x \in L_2$ we have $j < x \leq i$ and consequently $\mathcal{A}[x] \geq \alpha$.
-This leads to $\mathcal{A}[L_2] \geq \alpha$ and a contradiction.
+But then $\mathcal{A}[L] \leq \mathcal{A}[j] < \alpha$ so the loop terminates at $R$ (or before $R$).
+If the loop would terminate before $R$ there would be $P' \preccurlyeq R$, $L'$, $R'$ such that
+$\mathcal{A}[L'] < \alpha$, $i \preccurlyeq R'$. But then $j \lll L' \lll i$ so, from definition of $j$,
+for all $x \in L'$ we have $j < x \leq i$ and consequently $\mathcal{A}[x] \geq \alpha$.
+This leads to $\mathcal{A}[L'] \geq \alpha$, a contradiction.
 Therefore, the first loop terminates exactly at $R$. \
 The algorithm then switches from $R$ to $L$ and the second loop travels from $L$ towards leaves.
 Clearly it will end up in some leaf node $N \lll R$ and consequently $N \lll i$. But this means that $N$ is a proper
@@ -428,9 +433,9 @@ $\mathcal{A}[R] \leq \mathcal{A}[j] < \alpha$ so the loop would choose $N_{\phi 
 with the fact that we assumed $N_{\phi + 1}$ is an ancestor of k.
 
 As for the compexity estimate. It is clear that both loops repeat at most $\lceil \log n \rceil$ (which is depth
-of the segment tree). Assuming that `is_right_child` takes 2 operations in each step of the first loop we perform
+of the segment tree). Assuming that `is_left_child` takes 2 operations in each step of the first loop we perform
 at most $1 + 2 + 4 + 1 = 8$ operations, and in the second loop we perform $1 + 3 + 4 = 8$ operations. Hence we perform
-under $16 \lceil \log n \rceil + 4$ opertions (some operations are not loop related).
+under $16 \lceil \log n \rceil + 1$ opertions (some operations are not loop related).
 In any case, the complexity is $\mathcal{O}(\log n)$
 
 ### Theorem 7.2
