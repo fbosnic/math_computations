@@ -10,7 +10,7 @@ Let:
 
 ### Definition 0.1
 A suffix array $SA$ of $S$ is the array of alphabetically sorted suffixes of $S$.
-More precisely, the elements of the $SA$ are integers from $0$ to $len(S) - 1$
+More precisely, the elements of the $SA$ are integers from $0$ to $\textnormal{len}(S) - 1$
 such that value $SA[i] = x$ corresponds to suffix $S[x:]$.
 To be specific, let us assume that suffixes are sorted in the ascending order.
 
@@ -48,8 +48,8 @@ _Note - it is likely that the desired complexity is slightly below $\mathcal{O}(
 Whether an exponent lower than $\frac{3}{2}$ is required remains unclear._
 
 ### Definition 1:
-Let $i, j \in \N$, define $\pi(i, j)$ to be the length of the common prefix of $S[i:]$ and $S[j:]$.
-That is, $\pi(i, j) = \min_{x \in [m, M]}LCP[x]$ where $m := \min(lkp[i], lkp[j])$ and $M := \max(lkp[i], lkp[j])$
+Let $i, j \in \N$, define $\pi(i, j)$ to be the length of the common prefix of $S[i:]$ and $S[j:]$.\
+That is, $\pi(i, j) = \min_{m < x \leq M}LCP[x]$ where $m := \min(lkp[i], lkp[j])$ and $M := \max(lkp[i], lkp[j])$
 
 ### Corollary 1.1:
 * $\pi(i, j) = \pi(j, i)$
@@ -73,7 +73,7 @@ Clearly, $\alpha$-distinguished index for $i$ is unique if it exists. Let us den
 
 ### Corollary 1.2:
 For all $i$ and $\alpha$:
-* $k_0(i) = i + 1$
+* $k_0(i) = i + 1$ (unless $i = \textnormal{len}(S)$)
 * $\pi(k_\alpha(i), i) \geq \alpha$
 
 ### Lemma 3:
@@ -303,7 +303,9 @@ def find_distingiushed_elements:    # Returns distinguished elements for a speci
     Input:
         i                           # suffix index for which distinguished elements are computed
         LCP_seg_tree                # min segment tree on the LCP array with first element excluded
-        sa_seg_tree                 # min segment tree on the partial suffix array
+        sa_seg_tree                 # min segment tree on the partial suffix array. The suffix array
+                                    #   must not contain suffixes starting at index <= i. Instead,
+                                    #   those places need to be filled with value len(sa_seg_tree)
         sa_lookup                   # inverse lookup for suffix array
     Output:
         Inreasing list k_0 < k1 < ... < k_r     # distinguished suffix indices for i (i < k_0).
@@ -332,7 +334,7 @@ def find_distingiushed_elements:    # Returns distinguished elements for a speci
         dist_elem.append(k)
         a = min(pos, k)
         b = max(pos, k)
-        lcp_depth = LCP_seg_tree.min(a, b)
+        lcp_depth = LCP_seg_tree.min(a, b) + 1
 
     return dist_elem
 
@@ -504,32 +506,66 @@ In any case, the complexity is $\mathcal{O}(\log n)$
 
 ### Theorem 8
 Let $\mathcal{L}$ and $A_{sf}$ be the LCP array and the suffix array of string $S$ and let $f$ be the suffix
-lookup from $S$ to $A_{sf}$.
-We allow $A_{sf}$ to be half filled, as long as the value for missing entries is larger than
-$\textnormal{len}(A_{sf})$.
+lookup from $S$ to $A_{sf}$. $A_{sf}$ must not contain suffixes that start at position less or equal to $i$.
+Instead, those positions need to be filled with value $\textnormal{len}(S)$.
 Let also $i$ be an arbitrary index in $S$. Then function `find find_distinguished_elements` works as intended, that is
 it returns the list containing all distinguished elements $k_{0}(i), k_1(i), k_2(i), \ldots$, in this order.
-Furthermore, it has time complexity of $\mathcal{O}(\sqrt{n} \log n)$
+Furthermore, it has time complexity of $ \mathcal{O}(\sqrt{N - i} \log N)$ where $N$ is the length of string $S$.
 
 #### Proof:
+The edge case is when $i = \textnormal{len}(S) - 1$ because then there are no distinguished elements for $i$. But in that case
+the algorithm returns an empty list which is correct. \
+Let us assume that $ < \textnormal{len}(S) - 1$. Let $k_0 < k_1 < \ldots < k_n$ be all distinguished elements for $i$
+where $n \in \N$ denotes their number (note that n \geq 1 follows from $i+1$ being the distinguished element).
+We will prove that the algorithm return the list containing exactly $[k_1, k_2, \ldots k_n]$ in that order.\
+
 Clearly we start with $p := \textnormal{pos} = f(i)$, an empty list of distinguished elements and
-$d := \text{lcp\_depth} = 0$. At each step $n = 0, 1, \ldots$ the while loop will add one element $k_0$ to the output list and
-update the value of $d$ to $d_{n+1}$ (with $d_0 = d$ by convention). We will prove by induction that $k_n$ is the $n-th$
-distinguished element for $i$ and that $d_{n} = \pi(i, k_{n})$ until the loop terminates.
-Clearly $k_0(i) = i + 1$ (unless $i = \textnormal{len}(A_{sf})$
+$d := \text{lcp\_depth} = 0$. At each step $s = 0, 1, \ldots$ the while loop will add one element $k'_s$ to the output list and
+update the value of $d$ to $d_s$. Note that $d_s$ is updated to be $\pi(i, k) + 1$ which comes directly from the definition
+of $\pi$.
+We will prove by induction that $k'_s = k_s$ for $s = 0, 1, 2, \ldots n$ and that the loop terminates in the $(n+1)$-th step
+before appending values to the list.
+Let's start with the base. As $d = 0$, all elements in LCP array are greater or equal to $d$. Thus functions
+`find_left_limit` and `find_right_limit` return $l = 0$ and $r = \textnormal{len}(S) - 1$ respectively. Then the algorithm computes
+$$k_0' = k = \min{l \leq x \leq r} A_{sf} = \min{x} A_{sf} = i + 1 $$
+since places in $A_{sf}$ where indices smaller or equal to $i$ would appear are filled with value $\textnormal{len}(S)$.
+This is equal to $k_0$. Also, the loop will continue since $l \neq r$.\
+Assume now that $k_s' = k_s$ for some $ 0 < s < n$. Then we know that $d_{s} = \pi(i, k_s) + 1$. Calling functions
+`find_left_limit` and `find_right_limit` in step $s + 1$ returns $l$ and $r$ such that
+$$ l = \min(x \leq p: \mathcal{L}(y) \geq d_s \quad \forall x < y \leq i) $$
+$$ r = \max(p \geq x: \mathcal{L}(y) \geq d_s \quad \forall i < y \leq x) $$
 
+Let us now prove a helper lemma: If $\pi(i, j) \geq d_s$ then $l \leq f(j) \leq r$. Indeed, $A_{sf}$ is sorted so between $f(j)$ and
+$p$ (included) there can only be elements $x$ such that $\mathcal{L}(x) \geq \pi(j, i) \geq d_s$.
+But $l$ and $r$ we construcuted to contain all such segments.
 
+Notice that $\pi(i, k_{s+1}) \geq \pi(i, k_s) + 1 \geq d_s$ so $f(k_{s+1}) \in [l, r]$. Since we also have $i \in [l, r]$ and
+$k_s \neq i$, we must have $l \neq r$ so the loop does not terminate.
+Let $k'_{s+1} = \min_{l \leq x \leq r} A_{sf}(x)$ as computed in the function.
+We have $l \leq f(k'_{s+1}) \leq r$ (by construction) and therefore
+$$\pi(k'_{s+1}, i) = \min_{\min(p, f(k'_{s+1})) < x \leq \max(p, f(k'_{s+1}))} \mathcal{L}(x) \geq \min_{l < x \leq r} \mathcal{L}(x) \geq
+d_s > \pi(k_s, i).$$
+Suppose that $k'_{s+1}$ is not a distinguished element for $i$. Then there would exist some $i < j < k$ such that
+$\pi(i, j) \geq \pi(i, k'_{s+1})$. But that means that $l \leq f(j) \leq r$.
+Hence $j = A_{sf}(f(j)) \geq \min_{l < x < r} A_{sf}(x) = k'_s$ leading to
+the contradiction.
+So far we have proved that $k'_{s+1} is a distinguished element and $k'_{s+1} > k_s$. Suppose $k'_{s+1} != k_{s + 1}$.
+In that case we must have $k'_{s+1}> k_s$.
+But then $\pi(i, k_{s+1}) \geq \pi(i, k_s) + 1 = d_s$ so $l < f(k_{s+1}) < r$ (analgue conclusion was made a little ago)
+so $k_s \geq \min_{l < x < r} A_{sf}(x) = k'_{s+1}$ leading to another contradiction.\
+Hence $k'_{s+1} = k_{s+1}$.
+The only thing left to show is that the loop terminates in step $n + 1$. If we would have $l \neq r$ then
+then $\min_{l \leq x \leq r} A_{sf}(x)$ would be a distinguished element for $i$ (using the same argument from a while ago)
+but this is impossible since $k_n$ is the largest distinguished element for $i$. Hence we must have $l = r$ and the loop
+will terminate in step $n + 1$ without appending any outputs to the list.
 
-Note that this function is called within the main function only with the variable `sa_seg_tree` as the segment tree. Call this segment tree $\mathcal{S}_a$ and call the segment tree `LCP_seg_tree` by $\mathcal{S}_l$.
-$\mathcal{S}_a$ is initialized with a value of $n$ and element at `pos = lkp[l]` is set to $l$ once the function is called with parameter $l$.
-As `lkp` is a bijection, whenever this function is called, $\mathcal{S}_a$ contains values $l, l+1, \ldots n-1$ exactly once and then several times the value $n$.
-
-We will prove by induction that each set of the while loop produces the correct distinguished element. Initially, $v=l$ and all elements in $\mathcal{S}_a$ are larger or equal than that value.
-Thus, `left` equals $0$ and `right` equals $n-1$ and consequently `depth` is equal to $\tilde{v}=\min \mathcal{S}_l$.
-Clearly all elements of $\mathcal{S}_l$ are larger than $\tilde{v}$ so the second update keeps `left` at $0$ and  `right` at $n-1$.
-Recalling the specific structure of $\mathcal{S}_a$ we get that $k = l+1$ which is the first distinguished index $k_1(l)$ in the previous notation. $v$ is set to $l+2$.
-
-We now assume that ...
+Regarding complexity let $N = \textnormal{len}(S)$, the operations outside of the loop are insignificant. It was a pain to prove (in one of the
+main theorems above) there are
+at most $\sqrt{N - i}$ distinguished elements for $i$ but this also gives us the upper
+bund on the number of steps in the loop. In each step of the loop we compute $l$ and $r$ which has complexity
+$\mathcal{O}(log_N)$ in both cases. We also have to compute two minimumums over segment trees for $\mathcal{L}$ and
+$A_{sf}$, both of which have complexity $\mathcal{O}(N)$. Therefore, the algorithm has complexity
+$$\mathcal{O}(\sqrt{N - i} \log N).$$
 
 ### Theorem 2. Previous algorithm has time complexity of $\mathcal{O}(n^{3/2}\log n)$
 
