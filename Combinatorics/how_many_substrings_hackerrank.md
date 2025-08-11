@@ -32,6 +32,8 @@ Moreover the min segment tree assigns a value $v(N)$ to each of its nodes $N$ so
 - Let $P$ be a node with left child $L$ and right child $R$ and suppose $i \preccurlyeq L$, $j \preccurlyeq R$ then $i \leq j$
 - If for a leaf node $L$ we have $L \lll n-1$ then there exists some index $i$ such that $L$ is the node of that index ( the
     segment tree is allowed to have additional leaf nodes)
+Moreover, the length of the segment tree is defined to be the length of the underlying array. Note that this
+is not always equal to the number of leaves of the segment tree.
 
 ### Definition 0.4:
 A Fenwick tree of $n$ elements is an array of $n$ elements such that ...
@@ -297,16 +299,16 @@ def update_range:
     Output:
         updated Fenwick tree fwt
 
-def find_distingiushed_elements:
+def find_distingiushed_elements:    # Returns distinguished elements for a specific index
     Input:
-        l - suffix index for which distinguished elements are computed
-        LCP_seg_tree - min segment tree on the full LCP array
-        sa_seg_tree - min segment tree on the partial suffix array
-        sa_lookup - inverse lookup for suffix array
+        i                           # suffix index for which distinguished elements are computed
+        LCP_seg_tree                # min segment tree on the LCP array with first element excluded
+        sa_seg_tree                 # min segment tree on the partial suffix array
+        sa_lookup                   # inverse lookup for suffix array
     Output:
-        Inreasing list k_1 < k2 < ... < k_r - distinguished suffix indices for l (l < k_1)
+        Inreasing list k_0 < k1 < ... < k_r     # distinguished suffix indices for i (i < k_1)
 
-    pos = sa_lookup[l]
+    pos = sa_lookup[i]
     dist_elem = empty_list()
     r = 0
 
@@ -322,16 +324,13 @@ def find_distingiushed_elements:
             start=pos,
             value=lcp_depth
         )
-        if right < n-1:
-            right += 1
-        k = sa_seg_tree.min(left, right)
+        k = sa_seg_tree.min_element(left, right)
         dist_elem.append(k)
-        r = r + 1
         a = min(pos, k)
         b = max(pos, k)
         lcp_depth = LCP_seg_tree.min(a, b)
 
-    return r, dist_elem
+    return dist_elem
 
 
 def find_left_limit:  # finds the left-most index j such that
@@ -343,7 +342,7 @@ def find_left_limit:  # finds the left-most index j such that
     Output:           # the desired index j
     if start == 0:
         return 0
-    if start < alpha:
+    if min_segment_tree[start] < alpha:
         return start
     node = min_seg_tree.get_leaf_by_index(start)
     while node != root and (node.is_left_child() or node.parent.left_child().value() >= alpha):
@@ -363,17 +362,19 @@ def find_left_limit:  # finds the left-most index j such that
 def find_right_limit: # finds the right-most index j such that
                       # min_seg_tree[x] \geq alpha for all start < x <= j
     Input:
-        min_seg_tree  # "min"-segment tree over an arbitrary array
+        min_seg_tree  # "min"-segment tree over an lcp array with first element excluded
         start         # element to start the search from
         alpha         # an arbitrary bound
-    Output:           # the desiderd index j
-
-    node = min_seg_tree.get_leaf_by_index(start)
-    while node != root and (node.value() >= alpha):
-    while node != root and (node.is_right_child() or node.parent().right_child().value() >= value):
+    Output:           # the desired index j
+    if start == min_seg_tree.len():  # Not that the min_seg_tree has one element less than the array
+        return start
+    if  min_seg_tree[start + 1] < alpha:
+        return start
+    node = min_seg_tree.get_leaf_by_index(start + 1)
+    while node != root and (node.is_right_child() or node.parent().right_child().value() >= alpha):
         node = node.parent()
     if node == root:
-        return segment_tree.len() - 1
+        return min_segment_tree.len()  # note - min_seg_tree has one element less than the array
 
     node = node.parent.right_child()
     while not node.is_leaf():
@@ -434,25 +435,71 @@ with the fact that we assumed $N_{\phi + 1}$ is an ancestor of k.
 
 As for the compexity estimate. It is clear that both loops repeat at most $\lceil \log n \rceil$ (which is depth
 of the segment tree). Assuming that `is_left_child` takes 2 operations in each step of the first loop we perform
-at most $1 + 2 + 4 + 1 = 8$ operations, and in the second loop we perform $1 + 3 + 4 = 8$ operations. Hence we perform
-under $16 \lceil \log n \rceil + 1$ opertions (some operations are not loop related).
+at most $1 + 2 + 4 + 1 = 8$ operations, and in the second loop we perform $1 + 3 + 1 = 5$ operations. Hence we perform
+under $13 \lceil \log n \rceil + 3$ opertions (some operations are not loop related).
 In any case, the complexity is $\mathcal{O}(\log n)$
 
 ### Theorem 7.2
 Let $\mathcal{A}$ be an LCP-array of length $n$ with is a min-segment tree structure on $\mathcal{A}[1:]$.
-(Because the value of $LCP-array at index 0 is undefined).
 Let also $i$ be an arbitrary index on $\mathcal{A}$ and $\alpha \in \R$ an arbitrary value.
 For input ($\mathcal{A}$, $i$, $\alpha$) the funciton `find_right_limit` works as intended - it
 returns the largest $i \leq j < n$ such that $\mathcal{A}[x] \geq \alpha$ for every $i < x \leq j$. \
 Moreover computing `find_right_limit` has complexity $\mathcal{O} (\log n)$
 
 #### Proof:
-Should be very similar to the previous proof except for some minor technical details.
-...
+Note that $j$ is well defined becasue the set
+$$ \mathcal{M} := \{l \geq i: \mathcal{A}[x] \geq \alpha \quad \forall i < x \leq l\} $$
+contains $l=i$ (the condition is trivially true) so it must have a unique maximum.\
+We handle the trivial cases first; if $i$ is equal to the length of the min segment tree
+then $i = \textnormal{len}(\mathcal{A}) - 1$ (since the min segment tree ignores the first element) so
+there can be no elements other than $i$ in $\mathcal{M}$. The algorithm returns $i$ as expected.
+Next, if $\mathcal{A}[i + 1] < \alpha$ (note that $i+1$ is now a valid index) then again
+$\mathcal{M} = \{i\}$ and therefore $j=i$ and the algorithm is again correct.\
+Let us assume $i < \textnormal{len}(\mathcal{A}) - 1$ and $\mathcal{A}[i + 1] \geq \alpha$ from now on.
+Observe that the second assumption implies $j \geq i+1$. \
+The first while loop travels the ancestors of $i + 1$ from $i + 1$ to the root.\
+If $j = \textnormal{len}(\mathcal{A}) - 1$ then
+$\mathcal{A}[x] \geq \alpha$ for all $i < x \leq \textnormal{len}(\mathcal{A}) - 1$.
+This means that for every $P, L, R$ such that $i \preccurlyeq L$ we
+have $\mathcal{A}[R] \geq \alpha$. Hence the
+loop will only terminate at root and the algorithm will return $\textnormal{len}(\mathcal{A}) - 1$
+which is $j$ by assumption. \
+In case $j < \textnormal{len}(\mathcal{A}) - 1$, we need to have $\mathcal{A}[j+1] < \alpha $
+since otherwise $j+1 \in \mathcal{M}$ which contradicts $j = \max \mathcal{M}$.
+Let $P$ the first common ancestor of both $i+1$ and $j+1$.
+Since $j \geq i + 1$, $P$ must be a non-leaf node, $P \neq i$.
+If $L$ and $R$ are left and right children of $P$ then we must have $i + 1 \preccurlyeq L$ and $j + 1 \preccurlyeq R$.
+But then $\mathcal{A}[R] \leq \mathcal{A}[j+1] < \alpha$ so the loop terminates at $L$ (or before $L$).
+Supposing that the loop terminates before $L$ there would be $P' \preccurlyeq L$ and $L'$, $R'$ such that
+$\mathcal{A}[R'] < \alpha$, $i + 1 \preccurlyeq L'$. But then $i + 1 \lll R' \lll j + 1$ so, from definition of $j$,
+for all $x \in R'$ we have $i < x \leq j$ and consequently $\mathcal{A}[x] \geq \alpha$.
+This leads to $\mathcal{A}[R'] \geq \alpha$, a contradiction.
+Therefore, the first loop terminates exactly at $L$. \
+The algorithm then switches from $L$ to $R$ and the second loop travels from $R$ towards leaves.
+Clearly it will end up in some leaf node $N$.
+Let $N_1 = L, N_2 \ldots N$ be the sequence of nodes produced in the second loop. This must be an ancestor line from
+$R$ to $N$.
+Suppose that $N \neq j + 1$ and let $P'$ be the common ancestor of $j + 1$ and $N$. Since $P'$ is an ancestor of $N$ it must have
+been visited during traversal of the second loop hence $P' = N_\phi$, for some $\phi$.
+Both $j + 1$ and $N$ are leaf nodes and we assumed $j + 1 \neq N$ so there are two possible cases.
+First, if $j + 1 \lll N$ then $j + 1 \preccurlyeq L'$, $N \preccurlyeq R'$, then we know
+$\mathcal{A}[L'] \leq \mathcal{A}[j+1] < \alpha$ so the loop would choose $N_{\phi + 1} = L$ wich is a contradiction
+as $N_{\phi + 1}$ is not an ancestor of k.
+On the other hand, if $N \lll j + 1$ then $N \preccurlyeq L'$, $j + 1 \preccurlyeq R'$. But then
+$$\mathcal{A}[L'] = \min_{x \in N} \mathcal{A}[x] \geq \min_{i < x \leq j} \mathcal{A}[x] \geq \alpha$$
+by definition of $j$. Hence the loop would choose $N_{\phi + 1} = R$ which again contradicts the fact that
+$N_{\phi + 1}$ is an ancestor of k. \
+Hence $N = j + 1$ and the algorithm returns $j + 1 - 1 = j$, just as expected.
+
+As for the compexity estimate. It is clear that both loops repeat at most $\lceil \log n \rceil$ (which is depth
+of the segment tree). Assuming that `is_left_right` takes 2 operations in each step of the first loop we perform
+at most $1 + 2 + 4 + 1 = 8$ operations, and in the second loop we perform $1 + 3 + 1 = 5$ operations. Hence we perform
+under $13 \lceil \log n \rceil + 3$ opertions (some operations are not loop related).
+In any case, the complexity is $\mathcal{O}(\log n)$
 
 
 ### Theorem 8
-TODO
+Let
 
 Next, we move to `find_distinguished_elements` function.
 Note that this function is called within the main function only with the variable `sa_seg_tree` as the segment tree. Call this segment tree $\mathcal{S}_a$ and call the segment tree `LCP_seg_tree` by $\mathcal{S}_l$.
