@@ -248,13 +248,13 @@ of $i$-distinguished elements is bounded by $\sqrt{8(L-i)}$.
 
 ### Algorithm
 ```
-def Main
+def main
     Input:
         1 <= n, q <= 10^5,
         string S of n character,
         list of queries Q = [(s_k, e_k) for k=1...q]
     Output:
-        list of n ints - number of different substrings of S in the inclusive range s_k, e_k
+        list of n ints - number of different substrings of S in range s_k: e_k (right bound excluded)
 
     SA, LCP = compute_SA_and_LCP(S)
     lkp = compute_reverse_lookup(SA)
@@ -269,26 +269,32 @@ def Main
         underlying_array=LCP,
         type="min"
     )
+    Q = Q.sort_by_start_indices("descending")
+    result = []
 
-    for l = n - 1 down to l = 0:
+    for i = n - 1 down to l = 0:
         pos = lkp[l]
 
         k_0 < k_1 < ... < k_r = find_distinguished_elements(
-            starting_position=pos,
-            lcp_segment_tree=LCP_seg_tree,
+            i=i,
+            LCP_segment_tree=LCP_seg_tree,
             sa_seg_tree=sa_seg_tree,
             sa_lookup=lkp
         )
-        fwt.update_range(start=l, end=n, value=1)
-        _progressive_lcp = 0
-        for i=0 up to r-1:
+        fwt.update_range(start=i, end=i+1, value=1)
+        _progressive_lcp = LCP_seg_tree.min(pos, lkp[k_0])
+        for l=1 up to r:
             fwt.update_range(
-                start=k_i + _progressive_lcp,
-                end=k_i + LCP_seg_tree.min(pos, lkp[k_i]),
-                value=-1
+                start=k_l + _progressive_lcp,
+                end=k_l + LCP_seg_tree.min(pos, lkp[k_l]),
+                value=1
             )
-            _progressive_lcp = LCP_seg_tree.min(pos, lkp[k_i])
-        sa_seg_tree.update(pos, l)
+            _progressive_lcp = LCP_seg_tree.min(pos, lkp[k_l])
+        if Q.top().start() == i:
+            results.append(fwt.ranged_sum(i, Q.top().end()))
+            Q.pop()
+        sa_seg_tree.update(pos, i)
+    return results
 
 def update_range:
     Input:
@@ -308,7 +314,7 @@ def find_distingiushed_elements:    # Returns distinguished elements for a speci
                                     #   those places need to be filled with value len(sa_seg_tree)
         sa_lookup                   # inverse lookup for suffix array
     Output:
-        Inreasing list k_0 < k1 < ... < k_r     # distinguished suffix indices for i (i < k_0).
+        Inreasing list k_0 < k_1 < ... < k_r     # distinguished suffix indices for i (i < k_0).
                                                 # Empty if i = len(sa_seg_tree)
     if i  = len(sa_seg_tree):
         return []
@@ -567,10 +573,108 @@ $\mathcal{O}(log_N)$ in both cases. We also have to compute two minimumums over 
 $A_{sf}$, both of which have complexity $\mathcal{O}(N)$. Therefore, the algorithm has complexity
 $$\mathcal{O}(\sqrt{N - i} \log N).$$
 
-### Theorem 2. Previous algorithm has time complexity of $\mathcal{O}(n^{3/2}\log n)$
+### Theorem 9.
+Let $n \in \N$ be an arbitrary number and let $S$ be a string of $n$ characters from a finite alphabet.
+Let $q_1, q_2, \ldots q_n$ be a collection of queries, $q_j = (s_j, e_j), j=1,2, \ldots n$.
+Then function `main` return a list of numbers $a_1, a_2, \ldots a_n$ such that
+$$a_j = \# \{\textnormal{string } s: s \textnormal{ is a substring of } S[s_j: e_j] \} $$
+Moreovers, the time complexity of the algorithm is $\mathcal{O}(n^{3/2} \log n)$.
 
-#### Proof:
+#### Proof
+Let $a_j$ the actual numbers specified by the above formula and let us use $a'_j$ to denote the outputs of
+algorithm. We have to prove that $a_j = a'_j$ and that algorithm finishes after outputing $a'_n$. \
+The algorithm starts by constructing the suffix array $A_{sf}$ of $S$, the corresponding LCP-array $\mathcal{L}$
+and an empty FW-tree $\mathcal{F}$ with ranged updates. Constructing $A_{sf}$ and $\mathcal{L}$ takes $\mathcal{O}(n)$ operations
+according to https://arxiv.org/pdf/1101.3448 (for example), and since $\mathcal{F}$ is empty it is constructed in $O(1)$ time.
+We create a reverse lookup $f$ from indices of $S$ to $A_{sf}$ which takes $\mathcal{O}(n)$ time as well.
+Then we also create a partial suffix array $P_{sf}$ - an array of length $n$ initially filled with value $n$.
+This takes $\mathcal{O}(n)$ time.
+Now we build a segment tree on both $P_{sf}$ and $\mathcal{L}$. These are in
+fact very special kinds of segment trees and can be constructed on $\mathcal{O}(n)$ time,
+see https://cp-algorithms.com/data_structures/segment_tree.html.
+In summary, the setup is completed in $\mathcal{O}(n)$ time.\
+Let us move to the loop with $n$ steps where $i$ counts down from $n-1$ to $0$.
+First of all, notice that at the end of each step we update the value of $f(i)$ to the partial array $P_{sf}$ and the correspondig
+segment tree so that during the step $i$, $P_{sf}$ contains excatly suffixes from $i+1$ to $n - 1$ with
+values in place of missing suffixes set to $n$.
+Each such update takes $\mathcal{O}(\log n)$ time.
+Let us denote $\mathcal{F}_n = 0$ to be the initial state of $\mathcal{F}$.
+We will prove by induction that, at each step $i$, $\mathcal{F}$ is updated so that
+$$\sum_{j = i}^{e-1}\mathcal{F}_i[j] = \# \{\textnormal{string } x: x \textnormal{ is a substring of } S[i: e] \}
+\qquad \forall i < e \leq n$$
+Furthermore, each such update is performed in $\mathcal{O}(\log n)$ operations.
+The base of the induction is $i = n-1$. This is a special case for function `find_distinguished elements`
+which returns an empty list.
+Since the list is empty, the algorithm only updates $\mathcal{F}_{n-1}[n-1: n] = \mathcal{F}_{n}[n-1: n] + 1$ so that
+for $e = n$ we have
+$$\sum_{j = n-1}^{e-1}\mathcal{F}_{n-1}[j] = \mathcal{F}_{n-1}[n-1] = 1 $$
+and there is naturally only one unique substring of $S[n-1: n]$.
+Since this is the only valid choice of $e$ the induction base is proved. \
+Let's now suppose that the equation is true for some $i \geq 1$ and prove it is true for $i - 1$.
+Notice that the number of unique substrings in $S[i, e]$ (for arbitrary $e$) is equal to the number of nodes in the
+suffix tree $ST(i, e)$ build on $S[i: e]$. This is completely described by the suffix array and LCP array
+for the $S[i, e]$. Therefore we can also write
+$$\sum_{j = i}^{e-1}\mathcal{F}_i[j] =  \vert ST(i, e) \vert \qquad \forall i < e \leq n$$
+Moreover, for each $e$, $ST(i, e)$ and $ST(i - 1, e)$ are related. One only needs to add the suffix $S[i-1]$ to the
+tree $ST(i, e)$ to get the the suffix tree $ST(i-1, e)$. If $p$ is the length of common prefix of
+suffix $S[i]$ that already exists in $ST(i,e)$ this will add exactly $e - (i - 1) - p$ nodes.
+Let $\pi_e$ be the function computing largest common prefix on string $S[: e]$, that is $\pi_e$ is
+exactly $\pi$ as defined before but for string $S[:e]$ instead of $S$. It is easy to see that
+$$\pi_e(x, y) = \pi(x, y) \wedge (e - x) \wedge (e - y).$$
+Suppose $i \leq k < e$ be such that $\pi_e(i-1, k) = \max_{i-1 < j < e} \pi_e(i-1, k)$. There might be several such $k$
+so let us take the smallest one to be specific.
+We will prove that $k$ is $\pi$-distinguished for $i-1$. Indeed, if that would not be the case,
+there would exist  $i - 1 < j < k$ such that $\pi(i-1, j) \geq \pi(i-1, k)$.
+Then $\pi_e(i-1, j) = \pi(i-1, j) \wedge (e - j) \geq \pi(i-1, k) \wedge(e - k) = \pi_e(j, k)$
+which cotradict the minimality of $k$. \
+So we find that
+$$\vert ST(i - 1, e) \vert = \vert ST(i, e) \vert + (e - i + 1) - \max_{i - 1 \rightarrow k} \pi(i-1, k) \wedge (e - k)$$
+Let $i - 1 < k_0, k_1, \ldots k_r$ be the distinguished elements for $i-1$ as returned by the function
+`find_distinguished_elements`.\
+Let us also shorten $\varphi_\alpha := \varphi_\alpha(i - 1) = \pi(i-1, k_\alpha)$ for $\alpha = 1, 2, \ldots r$ and
+$$g(e) \equiv g(e, i-1) := \max_{i - 1 \rightarrow k} \pi(i-1, k) \wedge (e - k)$$
+For $e < n$ let us consider the difference $g(e + 1) - g(e)$. Note that
+$$0 \geq \pi(i-i, k) \wedge (e + 1 - k) - \pi(i-1, k) \wedge (e - k) \geq 1$$
+so we must have $g(e + 1) - g(e) \in \{0, 1\}$ since the value is clearly an integer.\
+Let us suppose $g(e + 1) - g(e) = 0$. Let $k_{\alpha}$ denote the smallest $k$ for which the
+maximum is achieved in $g(e)$. If $\alpha < r$ then we must have
+$e \leq k_{\alpha + 1} + \phi_\alpha$; otherwise the maximum would be achieved for
+$k_{\alpha + 1}$ because $\pi(i-1, k_{\alpha + 1}) > \pi(i-1, k_{\alpha})$ which contradicts the
+construction of $k_\alpha$.
+Because of $g(e + 1) - g(e) = 0$ we find
+$$0 = \max_{i - 1 \rightarrow k} \pi(i - 1, k) \wedge (e + 1 - k) - \pi(i-1, k_{\alpha}) \wedge (e - k_{\alpha})
+\geq \pi(i-1, k_{\alpha}) \wedge (e + 1 - k_{\alpha}) - \pi(i-1, k_\alpha) \wedge (e - k_{\alpha}) \geq 0$$
+so $\pi(i-1, k_{\alpha}) \wedge (e + 1 - k_{\alpha}) = \pi(i-1, k_\alpha) \wedge (e - k_{\alpha})$ which is only
+possible when $e \geq k_\alpha + \varphi_\alpha$. Moreover for $e = k_{\alpha + 1} + \varphi_{\alpha}$ we
+would have $\varphi_{\alpha + 1} \wedge (e + 1 - k_{\alpha + 1}) = \phi_\alpha + 1 > g(e)$ which contradicts
+$g(e + 1) - g(e) = 0$.\
+Thus $g(e + 1) - g(e) = 0$ implies
+$$e \in \bigcup_{\alpha=0}^{r-1} [k_\alpha + \varphi_\alpha, k_{\alpha + 1} + \varphi_\alpha)
+\cup [k_r + \varphi_r, n]$$
+Conversly, let $e$ be in the set on the left. If $e \geq k_r + \varphi_r$ then $g(e) = \varphi_r$ which
+is the highest value $g$ can obtain (since $\varphi_r \geq \varphi_{k'}$ for every $k'$), so
+$g(e+1) - g(e) = 0$.\
+If $k_\alpha + \varphi_\alpha \leq e < k_{\alpha + 1} + \varphi_\alpha$ for some $\alpha$
+then we have the following:
+1) $\varphi_{\alpha} \wedge (e + 1 - k_\alpha) = \varphi_{\alpha} \wedge (e - k_\alpha) = \varphi_{\alpha}$,
+2) $\varphi_{\alpha'} \wedge (e + 1 - k_\alpha') \leq \varphi_{\alpha'} < \varphi_{\alpha}$ for all $\alpha' < \alpha$,
+3) $\varphi_{\alpha''} \wedge (e + 1 - k_\alpha'') \leq (e + 1 - k_{\alpha + 1}) \leq \varphi_{\alpha}$ for all $\alpha < \alpha''$
 
+Combining these three findings we see that $g(e+1) = g(e) = \varphi_\alpha$ so $g(e+1) - g(e) = 0$.\
+As $g(i) = 0$ is easily computed, we now have
+$$ g(e) = \sum_{j=i}^{e-1} \sum_{\alpha=0}^{r-1} \mathbf{1}_{[k_\alpha + \varphi_\alpha, k_{\alpha + 1} + \varphi_\alpha)} (j)  +
+\mathbf{1}_{[k_r + \varphi_{r}, n]}(j) $$
+and thus
+$$\vert ST(i - 1, e) \vert = \vert ST(i, e) \vert + (e - i + 1) -
+\sum_{j=i}^{e-1} \sum_{\alpha=0}^{r-1} \mathbf{1}_{[k_\alpha + \varphi_\alpha, k_{\alpha + 1} + \varphi_{\alpha})} (j)$$
+$$ \ldots = \vert ST(i, e) \vert + 1 + \sum_{j=i}^{e-1} \sum_{\alpha=1}^{r} \mathbf{1}_{[k_\alpha +\varphi_{\alpha - 1}, k_{\alpha } + \varphi_{\alpha})} (j) $$
+If we define
+$$ h(j) = \mathbf{1}_{\{i-1\}}(j) + \sum_{\alpha=1}^{r} \mathbf{1}_{[k_\alpha +\varphi_{\alpha - 1}, k_{\alpha } + \varphi_{\alpha})} (j) $$
+then
+$$ \vert ST(i - 1, e) \vert = \sum_{j=i-1}^{e-1} \mathcal{F}_{i-1}(j) = \sum_{j=i}^{e-1} \mathcal{F}_i(j) + \sum_{j=i-1}^{e-1} h(j) =
+ \sum_{j=i-1}^{e-1} \mathcal{F}_i(j) + h(j) $$
+(noting that $\mathcal{F}_i(i-1) = 0$ was initialized in the algorith) which show that it is enought to set $\mathcal{F}_{i-1} = \mathcal{F}_i + h(j)$
+which is exactly what is done in the algorithm with the help of a for loop.
 
 Def 4:
 $i, j$ share distinguished element, $i \leftrightarrow j$ if there is a $k$ which is distinguished for both $i$ and $j$.
