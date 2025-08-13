@@ -36,8 +36,12 @@ Moreover, the length of the segment tree is defined to be the length of the unde
 is not always equal to the number of leaves of the segment tree.
 
 ### Definition 0.4:
-A Fenwick tree of $n$ elements is an array of $n$ elements such that ...
-
+A Fenwick-tree-with-ranged-updated (FWT with ranged updates) of $n$ elements is an array $\mathcal{F}$ of $n$
+with additional structure so that the following operatorions can be performed efficiently:
+1) $\sum_{j=0}^{k} \mathcal{F}(j)$ can be computed in $\mathcal{O}(\log n)$ operations
+2) For every $0 \leq s, e < n$ and $v \in \R$, the update
+    $$\mathcal{F}'(j) = \mathcal{F}(j) + v \quad \forall j \in [s, e]$$
+    can be performed in $\mathcal{O}(\log n)$ operations.
 
 ### Problem ([hackerrank.com - How many substrings](https://www.hackerrank.com/challenges/how-many-substrings/problem))
 Given a string of characters $S$ of length $N$ and a list of $N$ queries consisting of a start index $s_k$ and an end index $e_k$, $0 \leq s_k < e_k \leq N$
@@ -281,7 +285,6 @@ def main
             sa_seg_tree=sa_seg_tree,
             sa_lookup=lkp
         )
-        fwt.update_range(start=i, end=i+1, value=1)
         fwt.update_range(start=i, end=i+1, value=1)
         for l=0 up to r-1:
             _progressive_lcp = LCP_seg_tree.min(pos, lkp[k_l])
@@ -598,7 +601,8 @@ This takes $\mathcal{O}(n)$ time.
 Now we build a segment tree on both $P_{sf}$ and $\mathcal{L}$. These are in
 fact very special kinds of segment trees and can be constructed on $\mathcal{O}(n)$ time,
 see https://cp-algorithms.com/data_structures/segment_tree.html.
-In summary, the setup is completed in $\mathcal{O}(n)$ time.\
+Finally, we need to sort the input list of queries which takes $\mathcal{O}(n \log n)$ time.
+In summary, the setup is completed in $\mathcal{O}(n \log n)$ time.\
 Let us move to the loop with $n$ steps where $i$ counts down from $n-1$ to $0$.
 First of all, notice that at the end of each step we update the value of $f(i)$ to the partial array $P_{sf}$ and the correspondig
 segment tree so that during the step $i$, $P_{sf}$ contains excatly suffixes from $i+1$ to $n - 1$ with
@@ -694,7 +698,19 @@ $q_j = (s_j, e_j)$ such that $s_j = i$. The output is computed as
 $$a'_j = \sum_{j=i-1}^{e-1} \mathcal{F}_{i-1}(j) = \vert ST(i - 1, e) \vert =
 \# \{\textnormal{string } s: s \textnormal{ is a substring of } S[i: e_j] \} = a_j $$
 which is what we were set up to prove.
-The outputs might not be in the inital order but this is reordered in the final step.
+The outputs might not be in the inital order but they are reordered in the final step.\
+Regarding time complexity, during each setep of the for loop we need to call `find_distinguished_elements`
+function, which takes $\mathcal{O}(\sqrt{n} \log n)$ operations, and then also make $r+1$ ranged updates
+with the Fenwick tree $\mathcal{F}$, each of which takes $\mathcal{O}(\log n)$ operations. Since we know
+from our main estimate that $r \leq \sqrt{8 n}$ we find that the total cost of updates is
+$\mathcal{O}(\sqrt{n} \log n)$. Since there are exactly $n$ steps in the for loop, all of this can be performed
+in $\mathcal{O}(n^{3/2} \log n)$ operations. It remains to accunt for computing of outputs $a_j'$. Clearly
+an output is performed by calling a partial sum operation on the fenwinck tree $\mathcal{F}$ exactly once
+for each $j$. The order of $j$ in which this is computed is unclear, but it makes no difference. The cost
+of computing each partial sum is $\mathcal{O}(\log n)$ so the total cost of computing all outputs is
+$\mathcal{O}(n \log n)$ as there are at $n$ of them.\
+The final reordering of outputs can is performed in $\mathcal{O}(n)$ steps so that that the complete algorithm
+runs in $\mathcal{O}(n^{3/2} \log n)$ time complexity.\ This completes the proof.
 
 
 Def 4:
