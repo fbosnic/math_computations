@@ -641,15 +641,16 @@ segment tree so that during the step $i$, $P_{sf}$ contains excatly suffixes fro
 values in place of missing suffixes set to $n$.
 Each such update takes $\mathcal{O}(\log n)$ time.
 Let us denote $\mathcal{F}_n = 0$ to be the initial state of $\mathcal{F}$.
-We will prove by induction that, at each step $i$, $\mathcal{F}$ is updated so that
-$$\sum_{j = i}^{e-1}\mathcal{F}_i[j] = \# \{\textnormal{string } x: x \textnormal{ is a substring of } S[i: e] \}
+We will prove by induction that, at each step $i$, $\mathcal{F}$ is updated so that $\mathcal{F}_i[0:i - 1] = 0$ and
+$$\sum_{j = 0}^{e-1}\mathcal{F}_i[j] = \# \{\textnormal{string } x: x \textnormal{ is a substring of } S[i: e] \}
 \qquad \forall i < e \leq n$$
 Furthermore, each such update is performed in $\mathcal{O}(\log n)$ operations.
 The base of the induction is $i = n-1$. This is a special case for function `find_distinguished elements`
 which returns an empty list.
-Since the list is empty, the algorithm only updates $\mathcal{F}_{n-1}[n-1: n] = \mathcal{F}_{n}[n-1: n] + 1$ so that
+Since the list is empty and $\mathcal{F}_n$ was intially filled with zeros,
+the algorithm only updates $\mathcal{F}_{n-1}[n-1: n] = \mathcal{F}_{n}[n-1: n] + 1$ so that
 for $e = n$ we have
-$$\sum_{j = n-1}^{e-1}\mathcal{F}_{n-1}[j] = \mathcal{F}_{n-1}[n-1] = 1 $$
+$$\sum_{j = 0}^{e-1}\mathcal{F}_{n-1}[j] = \mathcal{F}_{n-1}[n-1] = 1 $$
 and there is naturally only one unique substring of $S[n-1: n]$.
 Since this is the only valid choice of $e$ the induction base is proved. \
 Let's now suppose that the equation is true for some $i \geq 1$ and prove it is true for $i - 1$.
@@ -716,18 +717,19 @@ If we define
 $$ h(j) = \mathbf{1}_{\{i-1\}}(j) + \sum_{\alpha=0}^{r-1} \left(\mathbf{1}_{[k_\alpha + \varphi_\alpha, k_{\alpha + 1} + \varphi_\alpha)} (j)  +
 \mathbf{1}_{[k_r + \varphi_{r}, n]}(j) \right) $$
 then
-$$ \vert ST(i - 1, e) \vert  = \sum_{j=i}^{e-1} \mathcal{F}_i(j) + \sum_{j=i-1}^{e-1} h(j) =
- \sum_{j=i-1}^{e-1} \mathcal{F}_i(j) + h(j) $$
+$$ \vert ST(i - 1, e) \vert  = \sum_{j=0}^{e-1} \mathcal{F}_i(j) + \sum_{j=0}^{e-1} h(j) =
+ \sum_{j=0}^{e-1} \mathcal{F}_i(j) + h(j) $$
 with remark that $\mathcal{F}_i(i-1) = 0$ was initialized in the algorithm. So we can set $\mathcal{F}_{i-1} = \mathcal{F}_i + h$
 to get
 $$\vert ST(i - 1, e) \vert = \sum_{j=i-1}^{e-1} \mathcal{F}_{i-1}(j).$$
-But this is exactly the update performed in the algorithm which whcih proves the induction for $e > i$.
+But this is exactly the update performed in the algorithm which which proves the induction for $e > i$ (if we note that
+$h(j) = 0$ and $\mathcal{F}_i (j) = 0$ for $j < i - 1$.
 The case $e = i$ needs to be verified separately. But this is easy since substring $S[i-1: i]$ has only 1 character and thus
 has exactly one unique substring. As we have updated $\mathcal{F}_{i-1}(i-1) = 1$ the claim follows.
 By mathematical induction, the initial statment is proved.\
 Finally, the algorithm initially sorts the input queries then in step $i$ computes outputs for all queries
 $q_j = (s_j, e_j)$ such that $s_j = i$. The output is computed as
-$$a'_j = \sum_{j=i-1}^{e-1} \mathcal{F}_{i-1}(j) = \vert ST(i - 1, e) \vert =
+$$a'_j = \sum_{j=0}^{e-1} \mathcal{F}_{i-1}(j) = \vert ST(i - 1, e) \vert =
 \# \{\textnormal{string } s: s \textnormal{ is a substring of } S[i: e_j] \} = a_j $$
 which is what we were set up to prove.
 The outputs might not be in the inital order but they are reordered in the final step.\
