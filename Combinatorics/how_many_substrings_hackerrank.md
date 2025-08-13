@@ -89,12 +89,44 @@ Let $k$ be distinguished for $i$ and $j$, $i < j$. Then
 Clearly $i < j < k$. If we suppose that $\pi(i,k) \leq \pi(j,k)$, then $\pi(i,j) \geq \min(\pi(i, k), \pi(j, k)) \geq \pi(i, k)$. But this contradicts the fact that $k$ is distinguished for $i$ which proves 1).\
 2) follows immediately from one of the previous lemmas.
 
+## Side-note
+
 ### Prop 4:
 For any $i < j$ there is at most one $k$ which is distinguished for both $i$ and $j$.
 #### Proof:
 Suppose there are 2 such distinguished elements, $k^1 < k^2$.
 By previous lemma, this would imply $\pi(j, k^1) = \pi(i, j) = \pi(j, k^2)$ which contradicts the definition of $j \to k^2$.
 
+### Note
+It is possible to have triangles of indices such that each two have a distinguished element. The following example shows this.
+Similar cycles with 4, 5 or more elements can also be constructed.
+
+### Def 4.1:
+$i, j$ share distinguished element, $i \leftrightarrow j$ if there is a $k$ which is distinguished for both $i$ and $j$.
+
+### Example 4.2:
+For the sequence
+$$
+\begin{matrix}
+    a & x & x & a & b & y & a & x & a & b & a & x & x & a & b & y \\
+    0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 \\
+\end{matrix}
+$$
+we have $1 \leftrightarrow 3$, $3 \leftrightarrow 10$, $10 \leftrightarrow 1$
+
+### Note
+The fact that each two indices share at most one distinguished element is a heavy constraint on the total number
+of distinguished elements in string $S$. But it should be possible to construct an example containing
+$\mathcal{O}(n^{3/2})$ distinguished elements. A indication of this comes from the fact that for a prime $p$
+and $n = p^2$ is is possible to construct a set $\mathcal{A}$ of $p^3$ pairs $(x, y)$ such that
+$$ \vert \{ (x, y) \in \mathcal{A}: x = x_0 \} \vert \leq 2.$$
+This is constructed by looking at the set of all lines in the field $\mathbb{F}_p$ and encoding their graphs
+as $p^2$ $0-1$ arrays and stacking them in a matrix. The fact that each two lines have exactly one intersection
+point is equivalent to our initial condition.
+
+I supsect that $\mathcal{O}(n^{3/2})$ is in fact sharp estimate in this case, but have no idea how to prove it.
+
+## End-of-side-note
 
 ### Def 5.0:
 A finite sequence $S$ of length $L$ is said to be $p$-periodic if
@@ -710,17 +742,5 @@ for each $j$. The order of $j$ in which this is computed is unclear, but it make
 of computing each partial sum is $\mathcal{O}(\log n)$ so the total cost of computing all outputs is
 $\mathcal{O}(n \log n)$ as there are at $n$ of them.\
 The final reordering of outputs can is performed in $\mathcal{O}(n)$ steps so that that the complete algorithm
-runs in $\mathcal{O}(n^{3/2} \log n)$ time complexity.\ This completes the proof.
-
-
-Def 4:
-$i, j$ share distinguished element, $i \leftrightarrow j$ if there is a $k$ which is distinguished for both $i$ and $j$.
-
-Example 1: For the sequence
-$$
-\begin{matrix}
-    a & x & x & a & b & y & a & x & a & b & a & x & x & a & b & y \\
-    0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 \\
-\end{matrix}
-$$
-we have $1 \leftrightarrow 3$, $3 \leftrightarrow 10$, $10 \leftrightarrow 1$
+runs in $\mathcal{O}(n^{3/2} \log n)$ time complexity.\
+This completes the proof.
