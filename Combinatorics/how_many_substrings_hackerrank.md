@@ -269,10 +269,10 @@ def main
         underlying_array=LCP,
         type="min"
     )
-    Q = Q.sort_by_start_indices("descending")
+    Q, reverse_sort_fn = Q.sort_by_start_indices("descending")
     result = []
 
-    for i = n - 1 down to l = 0:
+    for i = n - 1 down to i = 0:
         pos = lkp[l]
 
         k_0 < k_1 < ... < k_r = find_distinguished_elements(
@@ -282,18 +282,24 @@ def main
             sa_lookup=lkp
         )
         fwt.update_range(start=i, end=i+1, value=1)
-        _progressive_lcp = LCP_seg_tree.min(pos, lkp[k_0])
-        for l=1 up to r:
+        fwt.update_range(start=i, end=i+1, value=1)
+        for l=0 up to r-1:
+            _progressive_lcp = LCP_seg_tree.min(pos, lkp[k_l])
             fwt.update_range(
                 start=k_l + _progressive_lcp,
-                end=k_l + LCP_seg_tree.min(pos, lkp[k_l]),
+                end=k_{l+1} + _progressive_lcp,
                 value=1
             )
-            _progressive_lcp = LCP_seg_tree.min(pos, lkp[k_l])
+        fwt.update_range(
+            start=k_r + LCP_seg_tree.min(pos, lkp[k_r]),
+            end=n,
+            value=1
+        )
         if Q.top().start() == i:
             results.append(fwt.ranged_sum(i, Q.top().end()))
             Q.pop()
         sa_seg_tree.update(pos, i)
+    results = reverse_sort_fn(results)
     return results
 
 def update_range:
@@ -615,7 +621,7 @@ Notice that the number of unique substrings in $S[i, e]$ (for arbitrary $e$) is 
 suffix tree $ST(i, e)$ build on $S[i: e]$. This is completely described by the suffix array and LCP array
 for the $S[i, e]$. Therefore we can also write
 $$\sum_{j = i}^{e-1}\mathcal{F}_i[j] =  \vert ST(i, e) \vert \qquad \forall i < e \leq n$$
-Moreover, for each $e$, $ST(i, e)$ and $ST(i - 1, e)$ are related. One only needs to add the suffix $S[i-1]$ to the
+Moreover, for each $e > i$, $ST(i, e)$ and $ST(i - 1, e)$ are related. One only needs to add the suffix $S[i-1]$ to the
 tree $ST(i, e)$ to get the the suffix tree $ST(i-1, e)$. If $p$ is the length of common prefix of
 suffix $S[i]$ that already exists in $ST(i,e)$ this will add exactly $e - (i - 1) - p$ nodes.
 Let $\pi_e$ be the function computing largest common prefix on string $S[: e]$, that is $\pi_e$ is
@@ -662,19 +668,34 @@ then we have the following:
 
 Combining these three findings we see that $g(e+1) = g(e) = \varphi_\alpha$ so $g(e+1) - g(e) = 0$.\
 As $g(i) = 0$ is easily computed, we now have
-$$ g(e) = \sum_{j=i}^{e-1} \sum_{\alpha=0}^{r-1} \mathbf{1}_{[k_\alpha + \varphi_\alpha, k_{\alpha + 1} + \varphi_\alpha)} (j)  +
-\mathbf{1}_{[k_r + \varphi_{r}, n]}(j) $$
+$$ g(e) = \sum_{j=i}^{e-1} \sum_{\alpha=0}^{r-1} \left( 1 - \mathbf{1}_{[k_\alpha + \varphi_\alpha, k_{\alpha + 1} + \varphi_\alpha)} (j)  +
+\mathbf{1}_{[k_r + \varphi_{r}, n]}(j) \right)  = (e - i) -
+\sum_{j=i}^{e-1} \sum_{\alpha=0}^{r-1} \left(\mathbf{1}_{[k_\alpha + \varphi_\alpha, k_{\alpha + 1} + \varphi_\alpha)} (j)  +
+\mathbf{1}_{[k_r + \varphi_{r}, n]}(j) \right)$$
 and thus
-$$\vert ST(i - 1, e) \vert = \vert ST(i, e) \vert + (e - i + 1) -
-\sum_{j=i}^{e-1} \sum_{\alpha=0}^{r-1} \mathbf{1}_{[k_\alpha + \varphi_\alpha, k_{\alpha + 1} + \varphi_{\alpha})} (j)$$
-$$ \ldots = \vert ST(i, e) \vert + 1 + \sum_{j=i}^{e-1} \sum_{\alpha=1}^{r} \mathbf{1}_{[k_\alpha +\varphi_{\alpha - 1}, k_{\alpha } + \varphi_{\alpha})} (j) $$
+$$\vert ST(i - 1, e) \vert = \vert ST(i, e) \vert + (e - i + 1) - g(e) = \vert ST(i, e) \vert + 1 +
+\sum_{j=i}^{e-1} \sum_{\alpha=0}^{r-1} \left(\mathbf{1}_{[k_\alpha + \varphi_\alpha, k_{\alpha + 1} + \varphi_\alpha)} (j)  +
+\mathbf{1}_{[k_r + \varphi_{r}, n]}(j) \right)$$
 If we define
-$$ h(j) = \mathbf{1}_{\{i-1\}}(j) + \sum_{\alpha=1}^{r} \mathbf{1}_{[k_\alpha +\varphi_{\alpha - 1}, k_{\alpha } + \varphi_{\alpha})} (j) $$
+$$ h(j) = \mathbf{1}_{\{i-1\}}(j) + \sum_{\alpha=0}^{r-1} \left(\mathbf{1}_{[k_\alpha + \varphi_\alpha, k_{\alpha + 1} + \varphi_\alpha)} (j)  +
+\mathbf{1}_{[k_r + \varphi_{r}, n]}(j) \right) $$
 then
-$$ \vert ST(i - 1, e) \vert = \sum_{j=i-1}^{e-1} \mathcal{F}_{i-1}(j) = \sum_{j=i}^{e-1} \mathcal{F}_i(j) + \sum_{j=i-1}^{e-1} h(j) =
+$$ \vert ST(i - 1, e) \vert  = \sum_{j=i}^{e-1} \mathcal{F}_i(j) + \sum_{j=i-1}^{e-1} h(j) =
  \sum_{j=i-1}^{e-1} \mathcal{F}_i(j) + h(j) $$
-(noting that $\mathcal{F}_i(i-1) = 0$ was initialized in the algorith) which show that it is enought to set $\mathcal{F}_{i-1} = \mathcal{F}_i + h(j)$
-which is exactly what is done in the algorithm with the help of a for loop.
+with remark that $\mathcal{F}_i(i-1) = 0$ was initialized in the algorithm. So we can set $\mathcal{F}_{i-1} = \mathcal{F}_i + h$
+to get
+$$\vert ST(i - 1, e) \vert = \sum_{j=i-1}^{e-1} \mathcal{F}_{i-1}(j).$$
+But this is exactly the update performed in the algorithm which whcih proves the induction for $e > i$.
+The case $e = i$ needs to be verified separately. But this is easy since substring $S[i-1: i]$ has only 1 character and thus
+has exactly one unique substring. As we have updated $\mathcal{F}_{i-1}(i-1) = 1$ the claim follows.
+By mathematical induction, the initial statment is proved.\
+Finally, the algorithm initially sorts the input queries then in step $i$ computes outputs for all queries
+$q_j = (s_j, e_j)$ such that $s_j = i$. The output is computed as
+$$a'_j = \sum_{j=i-1}^{e-1} \mathcal{F}_{i-1}(j) = \vert ST(i - 1, e) \vert =
+\# \{\textnormal{string } s: s \textnormal{ is a substring of } S[i: e_j] \} = a_j $$
+which is what we were set up to prove.
+The outputs might not be in the inital order but this is reordered in the final step.
+
 
 Def 4:
 $i, j$ share distinguished element, $i \leftrightarrow j$ if there is a $k$ which is distinguished for both $i$ and $j$.
