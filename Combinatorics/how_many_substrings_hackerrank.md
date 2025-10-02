@@ -309,7 +309,7 @@ def main
     result = []
 
     for i = n - 1 down to i = 0:
-        pos = lkp[l]
+        pos = lkp[i]
 
         k_0 < k_1 < ... < k_r = find_distinguished_elements(
             i=i,
@@ -361,7 +361,6 @@ def find_distingiushed_elements:    # Returns distinguished elements for a speci
         return []
     pos = sa_lookup[i]
     dist_elem = empty_list()
-    r = 0
 
     lcp_depth = 0
     while True:
@@ -405,7 +404,7 @@ def find_left_limit:  # finds the left-most index j such that
     node = node.parent().left_child()
 
     while not node.is_leaf():
-        if node.right_child().value() < value:
+        if node.right_child().value() < alpha:
             node = node.right_child()
         else:
             node = node.left_child()
@@ -431,7 +430,7 @@ def find_right_limit: # finds the right-most index j such that
 
     node = node.parent.right_child()
     while not node.is_leaf():
-        if node.left_child.value() < value:
+        if node.left_child.value() < alpha:
             node = node.left_child()
         else:
             node = node.right_child()
